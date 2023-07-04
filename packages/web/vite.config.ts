@@ -1,25 +1,20 @@
 import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react-swc'
+import vue from '@vitejs/plugin-vue'
 import taildwindcss from 'tailwindcss'
 import autoprefixer from 'autoprefixer'
 import path from 'path'
 import fs from 'fs-extra'
+import vuetify from 'vite-plugin-vuetify'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    build: {
-        rollupOptions: {
-            output: {
-                entryFileNames: `assets/[name].js`,
-                assetFileNames: `assets/[name].[ext]`
-            }
-        }
-    },
     plugins: [
-        react(),
-        {
+		vue(),
+        vuetify(),
+		{
             name: 'after-build',
             closeBundle: async () => {
+                await fs.ensureDir(path.resolve(__dirname, '../extension/dist'))
                 await fs.remove(
                     path.resolve(__dirname, '../extension/dist/assets')
                 )
@@ -29,8 +24,8 @@ export default defineConfig({
                 )
             }
         }
-    ],
-    css: {
+	],
+	css: {
         postcss: {
             plugins: [taildwindcss, autoprefixer],
         },
