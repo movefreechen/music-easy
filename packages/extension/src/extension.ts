@@ -2,11 +2,39 @@ import * as vscode from 'vscode'
 import * as path from 'path'
 import * as fs from 'fs'
 import * as Handlebars from 'handlebars'
+import { fork } from 'child_process'
+import type { ChildProcess } from 'child_process'
+
+let childApiServer: ChildProcess | null = null
+let controller: AbortController | null = null
+let signal: AbortSignal
 
 export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.commands.registerCommand('music.easy.start', () => {
-            // Create and show panel
+            controller = new AbortController()
+            signal = controller.signal
+            const server = path.resolve(
+                context.extensionPath,
+                'public/index.js'
+            )
+
+            const argv: string[] = []
+            const proxy = vscode.workspace
+                .getConfiguration()
+                .get('music.easy.proxy')
+            console.warn(proxy)
+            if (proxy) {
+                argv.push('--proxy=' + proxy)
+            }
+
+            childApiServer = fork(server, argv, { signal })
+            childApiServer.on('error', (err) => {
+                console.log(err)
+            })
+            childApiServer.on('message', (m) => {
+                console.log(m)
+            })
             const panel = vscode.window.createWebviewPanel(
                 'musicEasy',
                 'Music Easy',
@@ -16,11 +44,15 @@ export function activate(context: vscode.ExtensionContext) {
                 }
             )
 
-            // And set its HTML content
             panel.webview.html = getHtmlForWebview(context, panel.webview)
 
-            panel.webview.onDidReceiveMessage(message => {
+            panel.webview.onDidReceiveMessage(async (message) => {
                 console.log(message)
+            })
+
+            panel.onDidDispose(() => {
+                controller && controller.abort()
+                controller = null
             })
         })
     )
@@ -69,19 +101,20 @@ const getHtmlForWebview = (
             }
         }
     } else {
-        scriptUris.push(
-            'http://localhost:5173/src/main.ts'
-        )
+        scriptUris.push('http://localhost:5173/src/main.ts')
     }
 
     const html = template({
         scriptUris,
         cssUris,
-        scriptType: process.env.NODE_ENV !=='production' ? 'module' : ''
+        scriptType: process.env.NODE_ENV !== 'production' ? 'module' : '',
     })
 
     return html
 }
 
 // This method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() {
+    controller && controller.abort()
+    controller = null
+}

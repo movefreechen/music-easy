@@ -5226,6 +5226,13 @@ return /******/ (function(modules) { // webpackBootstrap
 });
 ;
 
+/***/ }),
+/* 5 */
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("child_process");
+
 /***/ })
 /******/ 	]);
 /************************************************************************/
@@ -5266,16 +5273,40 @@ const vscode = __webpack_require__(1);
 const path = __webpack_require__(2);
 const fs = __webpack_require__(3);
 const Handlebars = __webpack_require__(4);
+const child_process_1 = __webpack_require__(5);
+let childApiServer = null;
+let controller = null;
+let signal;
 function activate(context) {
     context.subscriptions.push(vscode.commands.registerCommand('music.easy.start', () => {
-        // Create and show panel
+        controller = new AbortController();
+        signal = controller.signal;
+        const server = path.resolve(context.extensionPath, 'public/index.js');
+        const argv = [];
+        const proxy = vscode.workspace
+            .getConfiguration()
+            .get('music.easy.proxy');
+        console.warn(proxy);
+        if (proxy) {
+            argv.push('--proxy=' + proxy);
+        }
+        childApiServer = (0, child_process_1.fork)(server, argv, { signal });
+        childApiServer.on('error', (err) => {
+            console.log(err);
+        });
+        childApiServer.on('message', (m) => {
+            console.log(m);
+        });
         const panel = vscode.window.createWebviewPanel('musicEasy', 'Music Easy', vscode.ViewColumn.One, {
             enableScripts: true,
         });
-        // And set its HTML content
         panel.webview.html = getHtmlForWebview(context, panel.webview);
-        panel.webview.onDidReceiveMessage(message => {
+        panel.webview.onDidReceiveMessage(async (message) => {
             console.log(message);
+        });
+        panel.onDidDispose(() => {
+            controller && controller.abort();
+            controller = null;
         });
     }));
 }
@@ -5316,12 +5347,15 @@ const getHtmlForWebview = (context, webview) => {
     const html = template({
         scriptUris,
         cssUris,
-        scriptType: process.env.NODE_ENV !== 'production' ? 'module' : ''
+        scriptType: process.env.NODE_ENV !== 'production' ? 'module' : '',
     });
     return html;
 };
 // This method is called when your extension is deactivated
-function deactivate() { }
+function deactivate() {
+    controller && controller.abort();
+    controller = null;
+}
 exports.deactivate = deactivate;
 
 })();
