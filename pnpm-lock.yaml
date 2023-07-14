@@ -6,7 +6,7 @@ settings:
 
 patchedDependencies:
   NeteaseCloudMusicApi@4.8.10:
-    hash: y4epmu47mibltcoonk3uliakuu
+    hash: 75smvsjlfvsh6p4mkig73jnox4
     path: patches/NeteaseCloudMusicApi@4.8.10.patch
 
 importers:
@@ -17,7 +17,7 @@ importers:
     dependencies:
       NeteaseCloudMusicApi:
         specifier: ^4.8.10
-        version: 4.8.10(patch_hash=y4epmu47mibltcoonk3uliakuu)
+        version: 4.8.10(patch_hash=75smvsjlfvsh6p4mkig73jnox4)
       axios:
         specifier: ^1.4.0
         version: 1.4.0
@@ -112,16 +112,28 @@ importers:
 
   packages/web:
     dependencies:
+      '@vueuse/core':
+        specifier: ^10.2.1
+        version: 10.2.1(vue@3.2.47)
+      '@vueuse/integrations':
+        specifier: ^10.2.1
+        version: 10.2.1(axios@1.4.0)(vue@3.2.47)
       axios:
         specifier: ^1.4.0
         version: 1.4.0
       vue:
         specifier: ^3.2.47
         version: 3.2.47
+      vue-router:
+        specifier: '4'
+        version: 4.2.4(vue@3.2.47)
       vuetify:
         specifier: ^3.3.6
         version: 3.3.6(typescript@5.1.3)(vite-plugin-vuetify@1.0.2)(vue@3.2.47)
     devDependencies:
+      '@types/vscode-webview':
+        specifier: ^1.57.1
+        version: 1.57.1
       '@vitejs/plugin-vue':
         specifier: ^4.1.0
         version: 4.1.0(vite@4.3.9)(vue@3.2.47)
@@ -944,9 +956,17 @@ packages:
     resolution: {integrity: sha512-G8hZ6XJiHnuhQKR7ZmysCeJWE08o8T0AXtk5darsCaTVsYZhhgUrq53jizaR2FvsoeCwJhlmwTjkXBY5Pn/ZHw==}
     dev: true
 
+  /@types/vscode-webview@1.57.1:
+    resolution: {integrity: sha512-ghW5SfuDmsGDS2A4xkvGsLwDRNc3Vj5rS6rPOyPm/IryZuf3wceZKxgYaUoW+k9f0f/CB7y2c1rRsdOWZWn0PQ==}
+    dev: true
+
   /@types/vscode@1.79.0:
     resolution: {integrity: sha512-Tfowu2rSW8hVGbqzQLSPlOEiIOYYryTkgJ+chMecpYiJcnw9n0essvSiclnK+Qh/TcSVJHgaK4EMrQDZjZJ/Sw==}
     dev: true
+
+  /@types/web-bluetooth@0.0.17:
+    resolution: {integrity: sha512-4p9vcSmxAayx72yn70joFoL44c9MO/0+iVEBIQXe3v2h2SiAsEIo/G5v6ObFWvNKRFjbrVadNf9LqEEZeQPzdA==}
+    dev: false
 
   /@types/webpack-env@1.18.1:
     resolution: {integrity: sha512-D0HJET2/UY6k9L6y3f5BL+IDxZmPkYmPT4+qBrRdmRLYRuV0qNKizMgTvYxXZYn+36zjPeoDZAEYBCM6XB+gww==}
@@ -1226,6 +1246,10 @@ packages:
       '@vue/shared': 3.3.4
     dev: true
 
+  /@vue/devtools-api@6.5.0:
+    resolution: {integrity: sha512-o9KfBeaBmCKl10usN4crU53fYtC1r7jJwdGKjPT24t348rHxgfpZ0xL3Xm/gLUYnc0oTp8LAmrxOeLyu6tbk2Q==}
+    dev: false
+
   /@vue/reactivity-transform@3.2.47:
     resolution: {integrity: sha512-m8lGXw8rdnPVVIdIFhf0LeQ/ixyHkH5plYuS83yop5n7ggVJU+z5v0zecwEnX7fa7HNLBhh2qngJJkxpwEEmYA==}
     dependencies:
@@ -1295,6 +1319,81 @@ packages:
       upath: 2.0.1
       vue: 3.2.47
       vuetify: 3.3.6(typescript@5.1.3)(vite-plugin-vuetify@1.0.2)(vue@3.2.47)
+
+  /@vueuse/core@10.2.1(vue@3.2.47):
+    resolution: {integrity: sha512-c441bfMbkAwTNwVRHQ0zdYZNETK//P84rC01aP2Uy/aRFCiie9NE/k9KdIXbno0eDYP5NPUuWv0aA/I4Unr/7w==}
+    dependencies:
+      '@types/web-bluetooth': 0.0.17
+      '@vueuse/metadata': 10.2.1
+      '@vueuse/shared': 10.2.1(vue@3.2.47)
+      vue-demi: 0.14.5(vue@3.2.47)
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - vue
+    dev: false
+
+  /@vueuse/integrations@10.2.1(axios@1.4.0)(vue@3.2.47):
+    resolution: {integrity: sha512-FDP5lni+z9FjHE9H3xuvwSjoRV9U8jmDvJpmHPCBjUgPGYRynwb60eHWXCFJXLUtb4gSIHy0e+iaEbrKdalCkQ==}
+    peerDependencies:
+      async-validator: '*'
+      axios: '*'
+      change-case: '*'
+      drauu: '*'
+      focus-trap: '*'
+      fuse.js: '*'
+      idb-keyval: '*'
+      jwt-decode: '*'
+      nprogress: '*'
+      qrcode: '*'
+      sortablejs: '*'
+      universal-cookie: '*'
+    peerDependenciesMeta:
+      async-validator:
+        optional: true
+      axios:
+        optional: true
+      change-case:
+        optional: true
+      drauu:
+        optional: true
+      focus-trap:
+        optional: true
+      fuse.js:
+        optional: true
+      idb-keyval:
+        optional: true
+      jwt-decode:
+        optional: true
+      nprogress:
+        optional: true
+      qrcode:
+        optional: true
+      sortablejs:
+        optional: true
+      universal-cookie:
+        optional: true
+    dependencies:
+      '@vueuse/core': 10.2.1(vue@3.2.47)
+      '@vueuse/shared': 10.2.1(vue@3.2.47)
+      axios: 1.4.0
+      vue-demi: 0.14.5(vue@3.2.47)
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - vue
+    dev: false
+
+  /@vueuse/metadata@10.2.1:
+    resolution: {integrity: sha512-3Gt68mY/i6bQvFqx7cuGBzrCCQu17OBaGWS5JdwISpMsHnMKKjC2FeB5OAfMcCQ0oINfADP3i9A4PPRo0peHdQ==}
+    dev: false
+
+  /@vueuse/shared@10.2.1(vue@3.2.47):
+    resolution: {integrity: sha512-QWHq2bSuGptkcxx4f4M/fBYC3Y8d3M2UYyLsyzoPgEoVzJURQ0oJeWXu79OiLlBb8gTKkqe4mO85T/sf39mmiw==}
+    dependencies:
+      vue-demi: 0.14.5(vue@3.2.47)
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - vue
+    dev: false
 
   /@webassemblyjs/ast@1.11.6:
     resolution: {integrity: sha512-IN1xI7PwOvLPgjcf180gC1bqn3q/QaOCwYUahIOhbYUu8KA/3tw2RT/T0Gidi1l7Hhj5D/INhJxiICObqpMu4Q==}
@@ -1447,7 +1546,7 @@ packages:
     resolution: {integrity: sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==}
     dev: true
 
-  /NeteaseCloudMusicApi@4.8.10(patch_hash=y4epmu47mibltcoonk3uliakuu):
+  /NeteaseCloudMusicApi@4.8.10(patch_hash=75smvsjlfvsh6p4mkig73jnox4):
     resolution: {integrity: sha512-UezM3xtIyk/sr5Syh4pqk1E4jTWvyC0JPkc+vUaqUZOphEYhC2AhAHEFF5TsrpmHLlfXONHzV1CFkpMpgmwYhQ==}
     engines: {node: '>=12'}
     hasBin: true
@@ -4894,6 +4993,30 @@ packages:
     dependencies:
       acorn: 8.9.0
       acorn-walk: 8.2.0
+    dev: false
+
+  /vue-demi@0.14.5(vue@3.2.47):
+    resolution: {integrity: sha512-o9NUVpl/YlsGJ7t+xuqJKx8EBGf1quRhCiT6D/J0pfwmk9zUwYkC7yrF4SZCe6fETvSM3UNL2edcbYrSyc4QHA==}
+    engines: {node: '>=12'}
+    hasBin: true
+    requiresBuild: true
+    peerDependencies:
+      '@vue/composition-api': ^1.0.0-rc.1
+      vue: ^3.0.0-0 || ^2.6.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+    dependencies:
+      vue: 3.2.47
+    dev: false
+
+  /vue-router@4.2.4(vue@3.2.47):
+    resolution: {integrity: sha512-9PISkmaCO02OzPVOMq2w82ilty6+xJmQrarYZDkjZBfl4RvYAlt4PKnEX21oW4KTtWfa9OuO/b3qk1Od3AEdCQ==}
+    peerDependencies:
+      vue: ^3.2.0
+    dependencies:
+      '@vue/devtools-api': 6.5.0
+      vue: 3.2.47
     dev: false
 
   /vue-template-compiler@2.7.14:

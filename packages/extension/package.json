@@ -25,7 +25,12 @@
         "music.easy.proxy": {
           "type": "string",
           "default": "",
-          "description": "http/https proxy url"
+          "description": "http/https代理地址"
+        },
+        "music.easy.port": {
+          "type": "number",
+          "default": 4000,
+          "description": "音乐api服务端口，默认4000"
         }
       }
     }
@@ -40,7 +45,7 @@
     "pretest": "npm run compile-tests && npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js",
-    "nccApi": "ncc build node_modules/NeteaseCloudMusicApi/app.js -o public -a"
+    "buildApi": "ncc build node_modules/NeteaseCloudMusicApi/app.js -o public -a"
   },
   "devDependencies": {
     "@types/glob": "^8.1.0",

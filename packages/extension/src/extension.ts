@@ -5,60 +5,85 @@ import * as Handlebars from 'handlebars'
 import { fork } from 'child_process'
 import type { ChildProcess } from 'child_process'
 
-let childApiServer: ChildProcess | null = null
+let apiServe: ChildProcess | null = null
 let controller: AbortController | null = null
 let signal: AbortSignal
 
 export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.commands.registerCommand('music.easy.start', () => {
-            controller = new AbortController()
-            signal = controller.signal
-            const server = path.resolve(
-                context.extensionPath,
-                'public/index.js'
-            )
+            let panel: null | vscode.WebviewPanel =
+                vscode.window.createWebviewPanel(
+                    'musicEasy',
+                    'Music Easy',
+                    vscode.ViewColumn.One,
+                    {
+                        enableScripts: true,
+                    }
+                )
 
-            const argv: string[] = []
-            const proxy = vscode.workspace
-                .getConfiguration()
-                .get('music.easy.proxy')
-            console.warn(proxy)
-            if (proxy) {
-                argv.push('--proxy=' + proxy)
-            }
+            runApiServe(context)
 
-            childApiServer = fork(server, argv, { signal })
-            childApiServer.on('error', (err) => {
-                console.log(err)
+            apiServe!.on('exit', () => {
+                panel &&
+                    vscode.window
+                        .showWarningMessage(
+                            '音乐服务异常，是否重新启动服务？',
+                            '重启',
+                            '退出'
+                        )
+                        .then((select) => {
+                            if (select === '重启') {
+                                abortApiServe()
+                                runApiServe(context)
+                            } else {
+                                panel!.dispose()
+                            }
+                        })
             })
-            childApiServer.on('message', (m) => {
-                console.log(m)
-            })
-            const panel = vscode.window.createWebviewPanel(
-                'musicEasy',
-                'Music Easy',
-                vscode.ViewColumn.One,
-                {
-                    enableScripts: true,
-                }
-            )
 
             panel.webview.html = getHtmlForWebview(context, panel.webview)
 
-            panel.webview.onDidReceiveMessage(async (message) => {
-                console.log(message)
+            panel.webview.onDidReceiveMessage((message) => {
+                handleMessage(message, context, panel!)
             })
 
             panel.onDidDispose(() => {
-                controller && controller.abort()
-                controller = null
+                abortApiServe()
+                panel = null
             })
         })
     )
 }
 
-function resolve(context: vscode.ExtensionContext, filePath: string) {
+enum MsgCommand {
+    GET_COOKIE,
+    SAVE_COOKIE,
+}
+
+type Message = {
+    command: MsgCommand
+    data?: any
+}
+function handleMessage(
+    message: Message,
+    context: vscode.ExtensionContext,
+    panel: vscode.WebviewPanel
+) {
+    const { command, data } = message
+    if (command === MsgCommand.GET_COOKIE) {
+        return panel.webview.postMessage({
+            command: MsgCommand.GET_COOKIE,
+            data: cookieGet(context),
+        })
+    }
+
+    if (command === MsgCommand.SAVE_COOKIE) {
+        cookieSave(data, context)
+    }
+}
+
+function resolve(filePath: string, context: vscode.ExtensionContext) {
     return path.resolve(context.extensionPath, filePath)
 }
 
@@ -79,7 +104,7 @@ const getHtmlForWebview = (
     context: vscode.ExtensionContext,
     webview: vscode.Webview
 ) => {
-    const htmlTemplateUri = resolve(context, './dist/index.html')
+    const htmlTemplateUri = resolve('./dist/index.html', context)
     const content = fs.readFileSync(htmlTemplateUri, 'utf-8')
 
     const template = Handlebars.compile(content)
@@ -87,9 +112,9 @@ const getHtmlForWebview = (
     const cssUris: string[] = []
     const scriptUris: string[] = []
     if (process.env.NODE_ENV === 'production') {
-        const assets = fs.readdirSync(resolve(context, './dist/assets'))
+        const assets = fs.readdirSync(resolve('./dist/assets', context))
         for (const asset of assets) {
-            const p = resolve(context, 'dist/assets/' + asset)
+            const p = resolve('dist/assets/' + asset, context)
             const uri = makeUriAsWebviewUri(context, webview, p)
 
             if (~asset.indexOf('.css')) {
@@ -113,8 +138,48 @@ const getHtmlForWebview = (
     return html
 }
 
+function runApiServe(context: vscode.ExtensionContext) {
+    controller = new AbortController()
+    signal = controller.signal
+    const server = resolve('public/index.js', context)
+
+    const argv: string[] = []
+    const proxy = vscode.workspace
+        .getConfiguration()
+        .get<string>('music.easy.proxy')
+    const port = vscode.workspace
+        .getConfiguration()
+        .get<number>('music.easy.port')
+
+    if (proxy && proxy.trim()) {
+        argv.push('--proxy=' + proxy.trim())
+    }
+
+    if (!isNaN(parseInt(port + ''))) {
+        argv.push('--port=' + port)
+    }
+
+    apiServe = fork(server, argv, { signal, silent: false })
+}
+
+function abortApiServe() {
+    try {
+        controller && controller.abort()
+        apiServe = null
+        controller = null
+    } catch (error) {}
+}
+
+const COOKIE_KEY = 'MUSIC_COOKIE'
+function cookieSave(cookie: string, context: vscode.ExtensionContext) {
+    context.globalState.update(COOKIE_KEY, cookie)
+}
+
+function cookieGet(context: vscode.ExtensionContext) {
+    return context.globalState.get(COOKIE_KEY)
+}
+
 // This method is called when your extension is deactivated
 export function deactivate() {
-    controller && controller.abort()
-    controller = null
+    abortApiServe()
 }

@@ -5274,44 +5274,59 @@ const path = __webpack_require__(2);
 const fs = __webpack_require__(3);
 const Handlebars = __webpack_require__(4);
 const child_process_1 = __webpack_require__(5);
-let childApiServer = null;
+let apiServe = null;
 let controller = null;
 let signal;
 function activate(context) {
     context.subscriptions.push(vscode.commands.registerCommand('music.easy.start', () => {
-        controller = new AbortController();
-        signal = controller.signal;
-        const server = path.resolve(context.extensionPath, 'public/index.js');
-        const argv = [];
-        const proxy = vscode.workspace
-            .getConfiguration()
-            .get('music.easy.proxy');
-        console.warn(proxy);
-        if (proxy) {
-            argv.push('--proxy=' + proxy);
-        }
-        childApiServer = (0, child_process_1.fork)(server, argv, { signal });
-        childApiServer.on('error', (err) => {
-            console.log(err);
-        });
-        childApiServer.on('message', (m) => {
-            console.log(m);
-        });
-        const panel = vscode.window.createWebviewPanel('musicEasy', 'Music Easy', vscode.ViewColumn.One, {
+        console.log(cookieGet(context));
+        let panel = vscode.window.createWebviewPanel('musicEasy', 'Music Easy', vscode.ViewColumn.One, {
             enableScripts: true,
         });
+        runApiServe(context);
+        apiServe.on('exit', () => {
+            panel &&
+                vscode.window
+                    .showWarningMessage('音乐服务异常，是否重新启动服务？', '重启', '退出')
+                    .then((select) => {
+                    if (select === '重启') {
+                        abortApiServe();
+                        runApiServe(context);
+                    }
+                    else {
+                        panel.dispose();
+                    }
+                });
+        });
         panel.webview.html = getHtmlForWebview(context, panel.webview);
-        panel.webview.onDidReceiveMessage(async (message) => {
-            console.log(message);
+        panel.webview.onDidReceiveMessage((message) => {
+            handleMessage(message, context, panel);
         });
         panel.onDidDispose(() => {
-            controller && controller.abort();
-            controller = null;
+            abortApiServe();
+            panel = null;
         });
     }));
 }
 exports.activate = activate;
-function resolve(context, filePath) {
+var MsgCommand;
+(function (MsgCommand) {
+    MsgCommand[MsgCommand["GET_COOKIE"] = 0] = "GET_COOKIE";
+    MsgCommand[MsgCommand["SAVE_COOKIE"] = 1] = "SAVE_COOKIE";
+})(MsgCommand || (MsgCommand = {}));
+function handleMessage(message, context, panel) {
+    const { command, data } = message;
+    if (command === MsgCommand.GET_COOKIE) {
+        return panel.webview.postMessage({
+            command: MsgCommand.GET_COOKIE,
+            data: cookieGet(context),
+        });
+    }
+    if (command === MsgCommand.SAVE_COOKIE) {
+        cookieSave(data, context);
+    }
+}
+function resolve(filePath, context) {
     return path.resolve(context.extensionPath, filePath);
 }
 const makeUriAsWebviewUri = (context, webviewView, uri) => {
@@ -5323,15 +5338,15 @@ const makeUriAsWebviewUri = (context, webviewView, uri) => {
  * inject params to template
  */
 const getHtmlForWebview = (context, webview) => {
-    const htmlTemplateUri = resolve(context, './dist/index.html');
+    const htmlTemplateUri = resolve('./dist/index.html', context);
     const content = fs.readFileSync(htmlTemplateUri, 'utf-8');
     const template = Handlebars.compile(content);
     const cssUris = [];
     const scriptUris = [];
     if (process.env.NODE_ENV === 'production') {
-        const assets = fs.readdirSync(resolve(context, './dist/assets'));
+        const assets = fs.readdirSync(resolve('./dist/assets', context));
         for (const asset of assets) {
-            const p = resolve(context, 'dist/assets/' + asset);
+            const p = resolve('dist/assets/' + asset, context);
             const uri = makeUriAsWebviewUri(context, webview, p);
             if (~asset.indexOf('.css')) {
                 cssUris.push(uri);
@@ -5351,10 +5366,43 @@ const getHtmlForWebview = (context, webview) => {
     });
     return html;
 };
+function runApiServe(context) {
+    controller = new AbortController();
+    signal = controller.signal;
+    const server = resolve('public/index.js', context);
+    const argv = [];
+    const proxy = vscode.workspace
+        .getConfiguration()
+        .get('music.easy.proxy');
+    const port = vscode.workspace
+        .getConfiguration()
+        .get('music.easy.port');
+    if (proxy && proxy.trim()) {
+        argv.push('--proxy=' + proxy.trim());
+    }
+    if (!isNaN(parseInt(port + ''))) {
+        argv.push('--port=' + port);
+    }
+    apiServe = (0, child_process_1.fork)(server, argv, { signal, silent: false });
+}
+function abortApiServe() {
+    try {
+        controller && controller.abort();
+        apiServe = null;
+        controller = null;
+    }
+    catch (error) { }
+}
+const COOKIE_KEY = 'MUSIC_COOKIE';
+function cookieSave(cookie, context) {
+    context.globalState.update(COOKIE_KEY, cookie);
+}
+function cookieGet(context) {
+    return context.globalState.get(COOKIE_KEY);
+}
 // This method is called when your extension is deactivated
 function deactivate() {
-    controller && controller.abort();
-    controller = null;
+    abortApiServe();
 }
 exports.deactivate = deactivate;
 

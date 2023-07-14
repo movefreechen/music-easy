@@ -8,6 +8,11 @@ import vuetify from 'vite-plugin-vuetify'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+    resolve: {
+        alias: {
+            '@': path.resolve(__dirname, 'src')
+        }
+    },
     plugins: [
 		vue(),
         vuetify(),
@@ -29,5 +34,5 @@ export default defineConfig({
         postcss: {
             plugins: [taildwindcss, autoprefixer],
         },
-    },
+    }
 })
