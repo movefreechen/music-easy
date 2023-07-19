@@ -26,7 +26,7 @@ instance.interceptors.response.use((response) => {
             throw Error(data?.msg)
         }
 
-        return data?.data
+        return data?.data || data?.result || data
     }
 
     return response

@@ -3,7 +3,7 @@ import type { WebviewApi } from 'vscode-webview'
 import { onMounted, onUnmounted } from 'vue'
 
 // 兼容浏览器调试
-if (!window.acquireVsCodeApi && typeof window.acquireVsCodeApi !== 'function') {
+if (!window.acquireVsCodeApi || typeof window.acquireVsCodeApi !== 'function') {
     window.acquireVsCodeApi = function <
         StateType = unknown
     >(): WebviewApi<StateType> {
@@ -19,8 +19,9 @@ if (!window.acquireVsCodeApi && typeof window.acquireVsCodeApi !== 'function') {
     }
 }
 
+const vscode = acquireVsCodeApi()
+
 export default function useMessage() {
-    const vscode = acquireVsCodeApi()
     const callbackMap: Map<Function, string> = new Map()
 
     function handleEvent(event: MessageEvent<Message>) {
