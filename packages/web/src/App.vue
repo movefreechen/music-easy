@@ -1,17 +1,12 @@
 <script setup lang="ts">
-import * as Api from '@/api/user'
+import { _loginQrCheck, _loginQrCreate, _loginQrKey } from '@/api/user'
 import { ref } from 'vue'
-import { useStorage } from '@vueuse/core'
 import { onMounted } from 'vue'
-import { USER_COOKIE_KEY } from './constant'
-import { MsgCommand } from '@/types'
 import useUserStore from '@/store/user'
-import useMessage from '@/hooks/useMessage'
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { watch } from 'vue'
 
-const { post } = useMessage()
 const userStore = useUserStore()
 const profile = computed(() => userStore.profile)
 
@@ -27,15 +22,14 @@ onMounted(async () => {
 const showQrCode = ref(false)
 const qrCode = ref('')
 async function onLogin() {
-    const { unikey } = await Api.loginQrKey()
-    const { qrimg } = await Api.loginQrCreate(unikey)
+    const { unikey } = await _loginQrKey()
+    const { qrimg } = await _loginQrCreate(unikey)
     qrCode.value = qrimg
     showQrCode.value = true
 
     qrCodeCheckLoop(unikey)
 }
 
-const userCookie = useStorage('cookie', '')
 const msg = ref('')
 const showMsg = ref(false)
 function qrCodeCheckLoop(unikey: string) {
@@ -44,19 +38,15 @@ function qrCodeCheckLoop(unikey: string) {
             interval && clearInterval(interval)
             qrCode.value = ''
         } else {
-            const { code, cookie } = await Api.loginQrCheck(unikey)
+            const { code, cookie } = await _loginQrCheck(unikey)
             if (code === 800) {
                 msg.value = '二维码过期'
                 showMsg.value = true
             } else if (code === 803) {
                 msg.value = '登录成功'
                 showMsg.value = true
-                userCookie.value = cookie
-                post({
-                    command: MsgCommand.SAVE_COOKIE,
-                    data: cookie,
-                })
-                window.localStorage[USER_COOKIE_KEY] = cookie
+                userStore.$setCookie(cookie!)
+                userStore.$checkLoginStatus()
             } else {
                 return
             }

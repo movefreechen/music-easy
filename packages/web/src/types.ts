@@ -24,3 +24,33 @@ export type PlayLevel =
     | 'jyeffect'
     | 'sky'
     | 'jymaster'
+
+export type PlayList = {
+    id: number
+    playcount?: number
+    playCount?: number
+    trackCount?: number
+    picUrl: string
+    name: string
+}
+
+export type Album = {
+    id: number
+    name: string
+    picUrl: string
+}
+
+export type Artist = {
+    id: number
+    name: string
+}
+
+export type Song = {
+    id: number
+    name: string
+    url?: string
+    artist?: Artist[]
+    album?: Album
+}
+
+export type PlayMode = 'order' | 'random' | 'cycle'

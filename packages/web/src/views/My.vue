@@ -1,11 +1,7 @@
 <script lang="ts" setup>
-import * as Api from '@/api/user'
 import { onMounted } from 'vue'
 
-async function getMyList() {
-    const res = await Api.userSubcount()
-    console.log(res)
-}
+async function getMyList() {}
 onMounted(() => {
     getMyList()
 })

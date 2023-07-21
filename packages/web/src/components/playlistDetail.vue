@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { VSkeletonLoader } from 'vuetify/labs/VSkeletonLoader'
-import { $playlistTrackAll } from '@/api/playlist'
+import { _playlistTrackAll } from '@/api/playlist'
 import { PlayLevel } from '@/types'
 import { watch } from 'vue'
+import { watchEffect } from 'vue'
 
 defineOptions({
     name: 'play-list',
@@ -23,12 +24,9 @@ const props = defineProps({
 const $emit = defineEmits(['update:modelValue'])
 
 const open = ref(false)
-watch(
-    () => props.modelValue,
-    (nval) => {
-        open.value = nval
-    }
-)
+watchEffect(() => {
+    open.value = props.modelValue
+})
 
 interface Music {
     name: string
@@ -53,8 +51,8 @@ const more = ref(true)
 async function fetchAllMusic() {
     if (!more.value) return
     loading.value = true
-    console.log(1)
-    const { privileges, songs } = await $playlistTrackAll(
+
+    const { privileges, songs } = await _playlistTrackAll(
         props.id,
         offset.value
     )
@@ -102,8 +100,8 @@ watch(
 <template>
     <v-dialog
         v-model="open"
-        width="520px"
-        height="450px"
+        width="700px"
+        height="550px"
         @update:model-value="(val) => $emit('update:modelValue', val)"
     >
         <v-skeleton-loader
