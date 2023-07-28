@@ -2,7 +2,7 @@
 import type { PlayList } from '@/types'
 import { _dailyPlaylist, _dailySongs } from '@/api/playlist'
 import { ref } from 'vue'
-import PlayListDetail from '@/components/playlistDetail.vue'
+import PlayListDetail from '@/components/PlaylistDetail.vue'
 import PlayListCard from './PlayListCard.vue'
 import useUserStore from '@/store/user'
 import { computed } from 'vue'
