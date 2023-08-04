@@ -6,7 +6,6 @@ import useUserStore from '@/store/user'
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { watch } from 'vue'
-import musicControl from './components/MusicControl/Index.vue'
 
 const userStore = useUserStore()
 const profile = computed(() => userStore.profile)
@@ -83,6 +82,7 @@ watch(
 
 <template>
     <v-app id="inspire">
+        <notifications position="top center" />
         <v-main class="bg-grey-lighten-3">
             <v-container>
                 <v-row>
@@ -142,7 +142,7 @@ watch(
         >
             <v-img :src="qrCode"></v-img>
         </v-dialog>
-        <music-control></music-control>
+        <div id="aplayer-control"></div>
     </v-app>
 </template>
 

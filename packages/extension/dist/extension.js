@@ -5279,7 +5279,6 @@ let controller = null;
 let signal;
 function activate(context) {
     context.subscriptions.push(vscode.commands.registerCommand('music.easy.start', () => {
-        console.log(cookieGet(context));
         let panel = vscode.window.createWebviewPanel('musicEasy', 'Music Easy', vscode.ViewColumn.One, {
             enableScripts: true,
         });

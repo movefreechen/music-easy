@@ -5,6 +5,7 @@ import { _playlistTrackAll } from '@/api/playlist'
 import { PlayLevel } from '@/types'
 import { watch } from 'vue'
 import { watchEffect } from 'vue'
+import usePlayer from '@/hooks/usePlayer'
 
 defineOptions({
     name: 'play-list',
@@ -22,6 +23,8 @@ const props = defineProps({
 })
 
 const $emit = defineEmits(['update:modelValue'])
+
+const { playListById } = usePlayer()
 
 const open = ref(false)
 watchEffect(() => {
@@ -95,6 +98,11 @@ watch(
         }
     }
 )
+
+// 播放歌单
+function onMusicPlayClick(songId: number) {
+    playListById(props.id, songId)
+}
 </script>
 
 <template>
@@ -144,6 +152,7 @@ watch(
                                 class="ms-2"
                                 icon="mdi-play"
                                 variant="text"
+                                @click="onMusicPlayClick(item.id)"
                             ></v-btn>
                         </template>
                     </v-list-item>

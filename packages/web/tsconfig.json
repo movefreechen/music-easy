@@ -22,14 +22,9 @@
         "baseUrl": "./",
         "paths": {
             "@/*": ["src/*"]
-        }
+        },
+        "types": ["@types/vscode-webview", "@types/howler"]
     },
-    "include": [
-        "src/**/*.ts",
-        "src/**/*.d.ts",
-        "src/**/*.tsx",
-        "src/**/*.vue",
-        "@types/vscode-webview"
-    ],
+    "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
     "references": [{ "path": "./tsconfig.node.json" }]
 }

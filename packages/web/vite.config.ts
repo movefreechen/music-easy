@@ -10,13 +10,13 @@ import vuetify from 'vite-plugin-vuetify'
 export default defineConfig({
     resolve: {
         alias: {
-            '@': path.resolve(__dirname, 'src')
-        }
+            '@': path.resolve(__dirname, 'src'),
+        },
     },
     plugins: [
-		vue(),
+        vue(),
         vuetify(),
-		{
+        {
             name: 'after-build',
             closeBundle: async () => {
                 await fs.ensureDir(path.resolve(__dirname, '../extension/dist'))
@@ -27,12 +27,12 @@ export default defineConfig({
                     path.resolve(__dirname, 'dist/assets'),
                     path.resolve(__dirname, '../extension/dist/assets')
                 )
-            }
-        }
-	],
-	css: {
+            },
+        },
+    ],
+    css: {
         postcss: {
             plugins: [taildwindcss, autoprefixer],
         },
-    }
+    },
 })

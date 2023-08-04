@@ -51,6 +51,7 @@ export type Song = {
     url?: string
     artist?: Artist[]
     album?: Album
+    level?: PlayLevel
 }
 
 export type PlayMode = 'order' | 'random' | 'cycle'
