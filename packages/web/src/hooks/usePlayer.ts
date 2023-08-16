@@ -1,8 +1,13 @@
-import APlayer from 'APlayer'
+import APlayer, { Audio } from 'APlayer'
 import { onMounted } from 'vue'
 import type { PlayLevel } from '@/types'
-import { _playlistTrackAll } from '@/api/playlist'
-import { _songUrl, _songDetail } from '@/api/song'
+import {
+    _playlistTrackAll,
+    _personalized,
+    _intelligenceList,
+    _dailyPlaylist,
+} from '@/api/playlist'
+import { _songUrl, _songDetail, _songLyric } from '@/api/song'
 
 let aplayerInstance: APlayer
 
@@ -29,6 +34,7 @@ async function fetchSongUrl(id: number | number[]) {
 
 export default function usePlayer() {
     async function playListById(id: number, songId?: number) {
+        aplayerInstance.pause()
         const { songs: s } = await _playlistTrackAll(id)
         const ids: number[] = []
         const songs: Record<number, AplayerSong> = {}
@@ -63,6 +69,7 @@ export default function usePlayer() {
     }
 
     async function playSongById(id: number) {
+        aplayerInstance.pause()
         const [url, { songs }] = await Promise.all([
             fetchSongUrl(id),
             _songDetail(id),
@@ -74,6 +81,86 @@ export default function usePlayer() {
             cover: song.al.picUrl,
             url: url[0].url,
         })
+
+        aplayerInstance.list.switch(aplayerInstance.list.audios.length - 1)
+        aplayerInstance.play()
+    }
+
+    async function playIntelligence(songId: number) {
+        const pl = await _dailyPlaylist()
+        const list = await _intelligenceList(songId, pl.recommend[0].id, songId)
+
+        const ids: number[] = []
+        const songs: Record<number, AplayerSong> = {}
+        list.forEach(({ songInfo }) => {
+            ids.push(songInfo.id)
+            songs[songInfo.id] = {
+                id: songInfo.id,
+                name: songInfo.name,
+                artist: songInfo.ar.map((a) => a.name).join(' '),
+                cover: songInfo.al.picUrl,
+                url: '',
+            }
+        })
+        const urls = await fetchSongUrl(ids)
+        urls.forEach((item) => {
+            if (songs[item.id]) {
+                songs[item.id].url = item.url
+                songs[item.id].level = item.level
+            }
+        })
+
+        aplayerInstance.list.clear()
+        const values = Object.values(songs)
+
+        const index = ids.findIndex((id) => id === songId)
+        if (~index) {
+            aplayerInstance.list.add(values)
+            aplayerInstance.list.switch(index)
+        } else {
+            const [url, { songs }] = await Promise.all([
+                fetchSongUrl(songId),
+                _songDetail(songId),
+            ])
+            const song = songs[0]
+            values.unshift({
+                name: song.name,
+                artist: song.ar.map((a) => a.name).join(' '),
+                cover: song.al.picUrl,
+                url: url[0].url,
+            })
+
+            aplayerInstance.list.add(values)
+            aplayerInstance.list.switch(0)
+        }
+
+        aplayerInstance.play()
+    }
+
+    function currentSong(): Audio | null {
+        return (
+            aplayerInstance.list?.audios?.[aplayerInstance.list?.index] ?? null
+        )
+    }
+
+    // 加载歌词
+    async function getSongLyric() {
+        const audio = currentSong()
+        if (typeof audio?.id === 'number') {
+            const {
+                lrc: { lyric },
+            } = await _songLyric(audio.id)
+            if (lyric) {
+                audio.lrc = lyric
+                aplayerInstance.lrc.parsed[aplayerInstance.list.index] =
+                    aplayerInstance.lrc.parse(lyric)
+                aplayerInstance.lrc.switch(aplayerInstance.list?.index)
+            }
+        }
+    }
+
+    function onLoadstart() {
+        getSongLyric()
     }
 
     onMounted(() => {
@@ -83,12 +170,16 @@ export default function usePlayer() {
                 fixed: true,
                 audio: [],
                 theme: '#121212',
+                lrcType: 1,
             })
+
+            aplayerInstance.on('loadstart', onLoadstart)
         }
     })
 
     return {
         playListById,
         playSongById,
+        playIntelligence,
     }
 }

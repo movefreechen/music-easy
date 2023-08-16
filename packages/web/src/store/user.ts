@@ -15,6 +15,7 @@ const useUserStore = defineStore('user', () => {
         nickname: '',
         avatarUrl: '',
         isLogin: false,
+        userId: undefined,
     })
 
     // 去vscode里查找cookie

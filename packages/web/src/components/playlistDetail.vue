@@ -82,9 +82,9 @@ function onMoreClick() {
 }
 
 watch(
-    () => props.id,
+    () => props.modelValue,
     (nval) => {
-        typeof nval === 'number' && props.modelValue && fetchAllMusic()
+        typeof props.id === 'number' && nval && fetchAllMusic()
     }
 )
 // 退出清空

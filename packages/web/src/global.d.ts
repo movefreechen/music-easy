@@ -6,10 +6,12 @@ type AsyncReturnType<T extends (...args: any) => any> = T extends (
     ? U
     : any
 
+type ValueOf<T> = T[keyof T]
 type FullScreenType = 'web' | 'browser'
 
 declare module 'APlayer' {
     export class Audio {
+        id?: number
         name: string
         url: string
         artist?: string
@@ -46,12 +48,50 @@ declare module 'APlayer' {
         cancel(type: FullScreenType): void
     }
 
+    type Events =
+        | 'abort'
+        | 'canplay'
+        | 'canplaythrough'
+        | 'durationchange'
+        | 'emptied'
+        | 'ended'
+        | 'error'
+        | 'loadeddata'
+        | 'loadedmetadata'
+        | 'loadstart'
+        | 'mozaudioavailable'
+        | 'pause'
+        | 'play'
+        | 'playing'
+        | 'progress'
+        | 'ratechange'
+        | 'seeked'
+        | 'seeking'
+        | 'stalled'
+        | 'suspend'
+        | 'timeupdate'
+        | 'volumechange'
+        | 'waiting'
+        | 'listshow'
+        | 'listhide'
+        | 'listadd'
+        | 'listremove'
+        | 'listswitch'
+        | 'listclear'
+        | 'noticeshow'
+        | 'noticehide'
+        | 'destroy'
+        | 'lrcshow'
+        | 'lrchide'
+
     export default class APlayer {
         events: any
         audio: HTMLAudioElement
         fullScreen: FullScreen
 
         constructor(options: APlayerOptions)
+
+        options: APlayerOptions
 
         play(): void
 
@@ -61,7 +101,7 @@ declare module 'APlayer' {
 
         toggle(): void
 
-        on(event: string, handler: () => void): void
+        on(event: Events, handler: () => void): void
 
         volume(percentage: number, nostorage: boolean, nonotice: boolean): void
 
@@ -83,6 +123,10 @@ declare module 'APlayer' {
             show(): void
             hide(): void
             toggle(): void
+            switch(index: number): void
+            parse(lrc: string): string[]
+            player: APlayer
+            parsed: string[][]
         }
 
         list: {
@@ -93,6 +137,8 @@ declare module 'APlayer' {
             remove(index: number): void
             switch(index: number): void
             clear(): void
+            audios: Audio[]
+            index: number
         }
     }
 }

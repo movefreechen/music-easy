@@ -70,7 +70,7 @@ watch(
     (nval) => {
         nval &&
             menus.value.push({
-                path: '/home',
+                path: '/my',
                 label: '我的',
             })
     },

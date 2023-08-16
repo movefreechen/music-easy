@@ -44,6 +44,7 @@ export function _loginStatus(): Promise<{
         userType: number
         vipType: number
         avatarUrl: string
+        userId: number
     } | null
 }> {
     return request('/login/status')

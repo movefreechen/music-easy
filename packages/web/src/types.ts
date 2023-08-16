@@ -12,6 +12,7 @@ export type Profile = {
     nickname: string
     avatarUrl: string
     isLogin: boolean
+    userId: number | undefined
     [key: string]: any
 }
 

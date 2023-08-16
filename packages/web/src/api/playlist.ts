@@ -36,7 +36,7 @@ export function _dailySongs(): Promise<{
 export function _playlistTrackAll(
     id: number,
     offset = 0,
-    limit = 0
+    limit = 20
 ): Promise<{
     privileges: {
         id: number
@@ -61,12 +61,47 @@ export function _playlistTrackAll(
     const params: any = {
         id,
         offset,
+        limit,
     }
 
-    if (limit > 0) {
-        params.limit = limit
-    }
     return request('/playlist/track/all', {
         params,
+    })
+}
+
+// 推荐歌单
+export function _personalized(limit = 30) {
+    return request({
+        url: '/personalized',
+        params: {
+            limit,
+        },
+    })
+}
+
+// 心动模式歌单
+export function _intelligenceList(
+    songId: number,
+    playListId: number,
+    startId?: number
+): Promise<
+    {
+        songInfo: {
+            id: number
+            cf: string
+            mv: number
+            al: Album
+            ar: Artist[]
+            name: string
+        }
+    }[]
+> {
+    return request({
+        url: '/playmode/intelligence/list',
+        params: {
+            id: songId,
+            pid: playListId,
+            sid: startId,
+        },
     })
 }

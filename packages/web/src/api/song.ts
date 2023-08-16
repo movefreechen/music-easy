@@ -46,3 +46,15 @@ export function _songDetail(id: number | number[]): Promise<{
         },
     })
 }
+
+export function _songLyric(id: number): Promise<{
+    lrc: {
+        lyric: string
+    }
+    version: number
+}> {
+    return request({
+        url: '/lyric',
+        params: { id },
+    })
+}
