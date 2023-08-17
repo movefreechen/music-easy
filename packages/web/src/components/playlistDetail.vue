@@ -110,7 +110,7 @@ function onMusicPlayClick(songId: number) {
         v-model="open"
         width="700px"
         height="550px"
-        @update:model-value="(val) => $emit('update:modelValue', val)"
+        @update:model-value="(val: Boolean) => $emit('update:modelValue', val)"
     >
         <v-skeleton-loader
             :elevation="6"

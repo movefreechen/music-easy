@@ -8,7 +8,7 @@ if (!window.acquireVsCodeApi || typeof window.acquireVsCodeApi !== 'function') {
         StateType = unknown
     >(): WebviewApi<StateType> {
         return {
-            postMessage(message: unknown): void {},
+            postMessage(): void {},
             getState(): StateType | undefined {
                 return undefined
             },
