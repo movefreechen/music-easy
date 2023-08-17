@@ -1,32 +1,31 @@
+diff --git a/CHANGELOG.MD b/CHANGELOG.MD
+deleted file mode 100644
+index a67472ece42b6b5d032b8a54d285537d7413c979..0000000000000000000000000000000000000000
 diff --git a/package.json b/package.json
-index 81ba078baf1445f903eb6a94941b4b52159b8eb9..3bfe2c5714845330c57281be776bb37e1155ab37 100644
+index cd8608a1af5562ba20c3cfe7c82fdbc639e1e40b..69728f711e00c8511ae998e581a22d9eaae9a927 100644
 --- a/package.json
 +++ b/package.json
-@@ -72,7 +72,8 @@
+@@ -67,6 +67,7 @@
+     "express": "^4.17.1",
+     "express-fileupload": "^1.1.9",
+     "md5": "^2.3.0",
++    "mri": "^1.2.0",
+     "music-metadata": "^7.5.3",
+     "pac-proxy-agent": "^7.0.0",
      "qrcode": "^1.4.4",
-     "safe-decode-uri-component": "^1.2.1",
-     "tunnel": "^0.0.6",
--    "yargs": "^17.1.1"
-+    "yargs": "^17.1.1",
-+    "mri": "^1.2.0"
-   },
-   "devDependencies": {
-     "@types/express": "^4.17.13",
 diff --git a/server.js b/server.js
-index 4f6602965f40d449157a5d31b3dfc4e10322e4bc..a42887666271b9ee2c449d1f82fcadc6e3d98d80 100644
+index befa2866fb91430f82953314a92e43b6ccae33d9..f9a4a96588c816ff417852e0de7840d6bcbee7cc 100644
 --- a/server.js
 +++ b/server.js
-@@ -8,7 +8,9 @@ const cache = require('./util/apicache').middleware
- const { cookieToJson } = require('./util/index')
+@@ -9,6 +9,7 @@ const { cookieToJson } = require('./util/index')
  const fileUpload = require('express-fileupload')
  const decode = require('safe-decode-uri-component')
-+const mri = require('mri')
  
 +const argv = mri(process.argv.slice(2))
  /**
   * The version check result.
   * @readonly
-@@ -141,6 +143,9 @@ async function consturctServer(moduleDefs) {
+@@ -141,6 +142,9 @@ async function consturctServer(moduleDefs) {
     */
    app.use((req, res, next) => {
      if (req.path !== '/' && !req.path.includes('.')) {
@@ -36,17 +35,8 @@ index 4f6602965f40d449157a5d31b3dfc4e10322e4bc..a42887666271b9ee2c449d1f82fcadc6
        res.set({
          'Access-Control-Allow-Credentials': true,
          'Access-Control-Allow-Origin':
-@@ -283,7 +288,7 @@ async function consturctServer(moduleDefs) {
-  * @returns {Promise<import('express').Express & ExpressExtension>}
-  */
- async function serveNcmApi(options) {
--  const port = Number(options.port || process.env.PORT || '3000')
-+  const port = Number(argv.port || options.port || process.env.PORT || '3000')
-   const host = options.host || process.env.HOST || ''
- 
-   const checkVersionSubmission =
 diff --git a/util/request.js b/util/request.js
-index cb620670da93b28681cd8cba336234379e0b787d..a5e6588314b25e11890f11772c19d5221467b8b6 100644
+index e30a404c32a5afb0b70346bab5ddd0a73811a387..6bf1628c01f2be3a61563a36ebbadfa8a1b0de10 100644
 --- a/util/request.js
 +++ b/util/request.js
 @@ -147,10 +147,11 @@ const createRequest = (method, url, data = {}, options) => {

@@ -58,3 +58,12 @@ export function _songLyric(id: number): Promise<{
         params: { id },
     })
 }
+
+export function _userLikeSongIdlist(uid: number): Promise<{
+    ids: number[]
+}> {
+    return request({
+        url: '/likelist',
+        params: { uid },
+    })
+}

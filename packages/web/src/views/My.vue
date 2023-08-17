@@ -1,8 +1,7 @@
 <script lang="ts" setup>
 import usePlayer from '@/hooks/usePlayer'
 import { computed, ref, watchEffect } from 'vue'
-import { _likeIdlist } from '@/api/my'
-import { _songDetail } from '@/api/song'
+import { _songDetail, _userLikeSongIdlist } from '@/api/song'
 import useUserStore from '@/store/user'
 import MusicTable, {
     type ItemList,
@@ -11,6 +10,8 @@ import MusicTable, {
 import { useRouter } from 'vue-router'
 import { Artist } from '@/types'
 import { SEARCH_TYPE } from '@/constant'
+import { _userPlayList } from '@/api/playlist'
+import { _userSubcount } from '@/api/user'
 
 const router = useRouter()
 usePlayer()
@@ -21,12 +22,15 @@ const isAnonimous = computed(() => userStore.isAnonimous)
 
 const loading = ref(true)
 
-const toggle = ref(0) // 0 喜欢的音乐 1 创建的歌单 2 收藏的歌单
+const toggle = ref(0) // 0 喜欢的音乐 1 创建和收藏的歌单
 watchEffect(() => {
     if (isLogin || isAnonimous) {
         switch (toggle.value) {
             case 0:
-                getMyLikeList()
+                getMyLikeSongList()
+                break
+            case 1:
+                getMyCreatedList()
                 break
         }
     }
@@ -35,11 +39,16 @@ watchEffect(() => {
 const listType = ref<'playList' | 'songList'>('songList')
 const items = ref<ItemSong[] | ItemList[]>([])
 
+const page = ref(1)
+const limit = ref(20)
+const total = ref(0)
+const paginationLength = computed(() => Math.floor(total.value / limit.value))
+
 const isIntelligence = ref(false)
-async function getMyLikeList() {
+async function getMyLikeSongList() {
     loading.value = true
 
-    const { ids } = await _likeIdlist(userStore.profile.userId!)
+    const { ids } = await _userLikeSongIdlist(userStore.profile.userId!)
     const { songs } = await _songDetail(ids)
     items.value = songs.map((song) => ({
         ...song,
@@ -49,6 +58,31 @@ async function getMyLikeList() {
     }))
     isIntelligence.value = true
 
+    loading.value = false
+}
+
+// 我的歌单， 第一个是我喜欢的歌曲默认删除
+async function getMyCreatedList() {
+    loading.value = true
+    listType.value = 'playList'
+    const { subPlaylistCount, createdPlaylistCount } = await _userSubcount()
+    const { playlist } = await _userPlayList(
+        userStore.profile.userId!,
+        page.value - 1,
+        limit.value
+    )
+
+    // 删除我喜欢的歌曲
+    if (page.value === 1) playlist.shift()
+    items.value = playlist.map((item) => ({
+        id: item.id,
+        name: item.name,
+        picUrl: item.coverImgUrl,
+        creator: item.creator.userId,
+        playcount: item.playCount,
+    })) as ItemList[]
+
+    total.value = subPlaylistCount + createdPlaylistCount - 1
     loading.value = false
 }
 
@@ -67,8 +101,7 @@ function onArtistClick(artist: Artist) {
     <div class="relative">
         <v-btn-toggle v-model="toggle" group rounded="0" wdith="100%">
             <v-btn :value="0"> 喜欢的音乐 </v-btn>
-            <v-btn :value="1"> 创建的歌单 </v-btn>
-            <v-btn :value="2"> 收藏的歌单 </v-btn>
+            <v-btn :value="1"> 我的歌单 </v-btn>
         </v-btn-toggle>
         <MusicTable
             :type="listType"
@@ -77,5 +110,10 @@ function onArtistClick(artist: Artist) {
             :intelligence="isIntelligence"
             @artist-click="onArtistClick"
         ></MusicTable>
+        <v-pagination
+            v-show="total > 0"
+            :length="paginationLength"
+            v-model:model-value="page"
+        ></v-pagination>
     </div>
 </template>

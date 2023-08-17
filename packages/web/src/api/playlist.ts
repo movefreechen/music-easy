@@ -105,3 +105,27 @@ export function _intelligenceList(
         },
     })
 }
+
+// 用户的歌单
+export function _userPlayList(
+    userId: number,
+    offset = 0,
+    limit = 20
+): Promise<{
+    playlist: {
+        id: number
+        name: string
+        playCount: number
+        trackCount: number
+        creator: {
+            userId: number
+        }
+        coverImgUrl: string
+    }[]
+    more: boolean
+}> {
+    return request({
+        url: '/user/playlist',
+        params: { uid: userId, offset, limit },
+    })
+}

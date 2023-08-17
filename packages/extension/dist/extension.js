@@ -5342,6 +5342,7 @@ const getHtmlForWebview = (context, webview) => {
     const template = Handlebars.compile(content);
     const cssUris = [];
     const scriptUris = [];
+    const mdiFontUrl = makeUriAsWebviewUri(context, webview, resolve('node_modules/@mdi/font/css/materialdesignicons.css', context));
     if (process.env.NODE_ENV === 'production') {
         const assets = fs.readdirSync(resolve('./dist/assets', context));
         for (const asset of assets) {
@@ -5358,6 +5359,7 @@ const getHtmlForWebview = (context, webview) => {
     else {
         scriptUris.push('http://localhost:5173/src/main.ts');
     }
+    cssUris.push(mdiFontUrl);
     const html = template({
         scriptUris,
         cssUris,

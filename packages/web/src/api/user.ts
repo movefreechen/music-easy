@@ -54,6 +54,11 @@ export function _loginVipInfo() {
     return request('/vip/info')
 }
 
-export function _userSubcount() {
+export function _userSubcount(): Promise<{
+    artistCount: number
+    createdPlaylistCount: number
+    mvCount: number
+    subPlaylistCount: number
+}> {
     return request('/user/subcount')
 }

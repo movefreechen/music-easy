@@ -128,7 +128,7 @@ watch(
                     </v-col>
 
                     <v-col cols="10">
-                        <v-sheet min-height="95vh" rounded="lg">
+                        <v-sheet rounded="lg">
                             <router-view></router-view>
                         </v-sheet>
                     </v-col>

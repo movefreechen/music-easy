@@ -6,6 +6,8 @@ import type { Artist } from '@/types'
 import { computed, ref } from 'vue'
 import usePlayer from '@/hooks/usePlayer'
 import PlayListDetail from '@/components/PlaylistDetail.vue'
+import { onMounted } from 'vue'
+import useUserStore from '@/store/user'
 
 export type ItemSong = {
     id: number
@@ -20,9 +22,10 @@ export type ItemList = {
     name: string
     playcount?: number
     artists?: Artist[]
+    creator?: number
 }
 
-const emits = defineEmits(['artistClick'])
+const emits = defineEmits(['artistClick', 'bottom'])
 
 const props = defineProps({
     loading: Boolean,
@@ -30,6 +33,10 @@ const props = defineProps({
     items: Array as PropType<Array<ItemSong | ItemList>>,
     intelligence: Boolean, // 心动模式
 })
+
+const userStore = useUserStore()
+
+const tableRef = ref()
 
 const { playSongById, playListById, playIntelligence } = usePlayer()
 
@@ -126,6 +133,26 @@ function numberCount(num: number) {
         return (num / 10000).toFixed(2) + 'W'
     }
 }
+
+// 滚动到距离底部100px提示
+onMounted(() => {
+    const vtable = tableRef.value
+    if (vtable?.$el) {
+        const tableWrapper = (vtable.$el as HTMLDivElement).querySelector(
+            '.v-table__wrapper'
+        )
+        if (tableWrapper) {
+            tableWrapper.addEventListener('scroll', (e) => {
+                if (e.target instanceof HTMLDivElement) {
+                    const { scrollTop, scrollHeight, clientHeight } = e.target
+                    if (scrollHeight - clientHeight - 100 <= scrollTop) {
+                        emits('bottom')
+                    }
+                }
+            })
+        }
+    }
+})
 </script>
 
 <template>
@@ -140,13 +167,29 @@ function numberCount(num: number) {
         height="600"
         item-value="name"
         v-show="!props.loading"
+        ref="tableRef"
     >
         <template #item.name="{ item }">
-            <span
-                class="cursor-pointer"
-                @click="onListNameClick(item.raw.id)"
-                >{{ item.columns.name }}</span
-            >
+            <span class="cursor-pointer" @click="onListNameClick(item.raw.id)">
+                <v-chip
+                    size="x-small"
+                    class="ma-2"
+                    :color="
+                        userStore.profile.userId === item.raw.creator
+                            ? '#00E676'
+                            : '#FF8F00'
+                    "
+                    text-color="white"
+                    v-if="item.raw.creator"
+                >
+                    {{
+                        userStore.profile.userId === item.raw.creator
+                            ? '我创建的'
+                            : '我收藏的'
+                    }}
+                </v-chip>
+                {{ item.columns.name }}
+            </span>
         </template>
         <template #item.picUrl="{ item }">
             <v-img
@@ -154,8 +197,8 @@ function numberCount(num: number) {
                 :src="item.columns?.picUrl"
                 class="align-end px-2 py-2"
                 gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
-                height="80px"
-                width="80px"
+                height="100px"
+                width="100px"
                 cover
             />
         </template>

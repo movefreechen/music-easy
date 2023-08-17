@@ -11,7 +11,7 @@
   "license": "ISC",
   "pnpm": {
     "patchedDependencies": {
-      "NeteaseCloudMusicApi@4.8.10": "patches/NeteaseCloudMusicApi@4.8.10.patch"
+      "NeteaseCloudMusicApi@4.9.2": "patches/NeteaseCloudMusicApi@4.9.2.patch"
     }
   }
 }
