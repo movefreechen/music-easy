@@ -4,17 +4,7 @@
 
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const fs = require('fs')
 const CopyPlugin = require('copy-webpack-plugin')
-const ncc = require('@vercel/ncc')
-
-// const vm2Dir = (file) => path.resolve(__dirname, 'node_modules/vm2/lib/' + file)
-// const vm2CopyFile = [
-//     'bridge.js',
-//     'events.js',
-//     'setup-sandbox.js',
-//     'setup-node-sandbox.js',
-// ].map((js) => vm2Dir(js))
 
 //@ts-check
 /** @typedef {import('webpack').Configuration} WebpackConfig **/
@@ -40,7 +30,7 @@ const extensionConfig = {
     },
     resolve: {
         alias: {
-            handlebars: 'handlebars/dist/handlebars.js'
+            handlebars: 'handlebars/dist/handlebars.js',
         },
         // support reading TypeScript and JavaScript files, 📖 -> https://github.com/TypeStrong/ts-loader
         extensions: ['.ts', '.js'],
@@ -77,17 +67,14 @@ const extensionConfig = {
             template: 'index.html',
             inject: false,
         }),
-        // new CopyPlugin({
-        //     patterns: [
-        //         ...vm2CopyFile.map((js) => ({
-        //             from: js,
-        //         })),
-        //         {
-        //             from: 'node_modules/NeteaseCloudMusicApi/module',
-        //             to: 'module',
-        //         },
-        //     ],
-        // })
+        new CopyPlugin({
+            patterns: [
+                {
+                    from: 'public',
+                    to: 'public',
+                },
+            ],
+        }),
     ],
 }
 

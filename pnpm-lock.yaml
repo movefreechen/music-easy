@@ -6,7 +6,7 @@ settings:
 
 patchedDependencies:
   NeteaseCloudMusicApi@4.9.2:
-    hash: arp7zzpik33ojjf2ontfqfpwu4
+    hash: 3qaq5ludvnh4xx7tn7ohvwlkhi
     path: patches/NeteaseCloudMusicApi@4.9.2.patch
 
 importers:
@@ -20,7 +20,7 @@ importers:
         version: 7.2.96
       NeteaseCloudMusicApi:
         specifier: ^4.9.2
-        version: 4.9.2(patch_hash=arp7zzpik33ojjf2ontfqfpwu4)
+        version: 4.9.2(patch_hash=3qaq5ludvnh4xx7tn7ohvwlkhi)
       axios:
         specifier: ^1.4.0
         version: 1.4.0
@@ -33,6 +33,9 @@ importers:
       handlebars:
         specifier: ^4.7.7
         version: 4.7.7
+      kill-port:
+        specifier: ^2.0.1
+        version: 2.0.1
       mri:
         specifier: ^1.2.0
         version: 1.2.0
@@ -49,6 +52,9 @@ importers:
       '@types/glob':
         specifier: ^8.1.0
         version: 8.1.0
+      '@types/kill-port':
+        specifier: ^2.0.0
+        version: 2.0.0
       '@types/mocha':
         specifier: ^10.0.1
         version: 10.0.1
@@ -185,12 +191,15 @@ importers:
       tailwindcss-animate:
         specifier: ^1.0.6
         version: 1.0.6(tailwindcss@3.3.2)
+      terser:
+        specifier: ^5.19.2
+        version: 5.19.2
       typescript:
         specifier: ^5.0.2
         version: 5.1.3
       vite:
         specifier: ^4.3.9
-        version: 4.3.9(@types/node@18.17.1)
+        version: 4.3.9(@types/node@18.17.1)(terser@5.19.2)
       vite-plugin-vue-devtools:
         specifier: 1.0.0-beta.6
         version: 1.0.0-beta.6(@types/node@18.17.1)(pug@3.0.2)(vite@4.3.9)
@@ -1019,28 +1028,23 @@ packages:
       '@jridgewell/set-array': 1.1.2
       '@jridgewell/sourcemap-codec': 1.4.15
       '@jridgewell/trace-mapping': 0.3.18
-    dev: true
 
   /@jridgewell/resolve-uri@3.1.0:
     resolution: {integrity: sha512-F2msla3tad+Mfht5cJq7LSXcdudKTWCVYUgw6pLFOOHSTtZlj6SWNYAp+AhuqLmWdBO2X5hPrLcu8cVP8fy28w==}
     engines: {node: '>=6.0.0'}
-    dev: true
 
   /@jridgewell/set-array@1.1.2:
     resolution: {integrity: sha512-xnkseuNADM0gt2bs+BvhO0p78Mk762YnZdsuzFV018NoG1Sj1SCQvpSqa7XUaTam5vAGasABV9qXASMKnFMwMw==}
     engines: {node: '>=6.0.0'}
-    dev: true
 
   /@jridgewell/source-map@0.3.5:
     resolution: {integrity: sha512-UTYAUj/wviwdsMfzoSJspJxbkH5o1snzwX0//0ENX1u/55kkZZkcTZP6u9bwKGkv+dkk9at4m1Cpt0uY80kcpQ==}
     dependencies:
       '@jridgewell/gen-mapping': 0.3.3
       '@jridgewell/trace-mapping': 0.3.18
-    dev: true
 
   /@jridgewell/sourcemap-codec@1.4.14:
     resolution: {integrity: sha512-XPSJHWmi394fuUuzDnGz1wiKqWfo1yXecHQMRf2l6hztTO+nPru658AyDngaBe7isIxEkRsPR3FZh+s7iVa4Uw==}
-    dev: true
 
   /@jridgewell/sourcemap-codec@1.4.15:
     resolution: {integrity: sha512-eF2rxCRulEKXHTRiDrDy6erMYWqNw4LPdQ8UQA4huuxaQsVeRPFl2oM8oDGxMFhJUWZf9McpLtJasDDZb/Bpeg==}
@@ -1050,7 +1054,6 @@ packages:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.0
       '@jridgewell/sourcemap-codec': 1.4.14
-    dev: true
 
   /@kyvg/vue3-notification@2.9.1(vue@3.3.4):
     resolution: {integrity: sha512-FsY8g25tQetr3etnarxHtCeNFKssH8sheFu13LyL2JJmOOel437QqKV5n4RBDDDTIo55iKgIVYXeojliXYdEhw==}
@@ -1156,6 +1159,13 @@ packages:
 
   /@types/json-schema@7.0.12:
     resolution: {integrity: sha512-Hr5Jfhc9eYOQNPYO5WLDq/n4jqijdHNlDXjuAQkkt+mWdQR+XJToOHrsD4cPaMXpn6KO7y2+wM8AZEs8VpBLVA==}
+    dev: true
+
+  /@types/kill-port@2.0.0:
+    resolution: {integrity: sha512-AegaqABFauES4++49NeNX7TyZJ7t48t10+qJn4QGVGQqDogEk89M0iI4W0HXS+TEUk/hYAtEsgJ+6nyuSyYxlw==}
+    dependencies:
+      '@types/node': 20.2.5
+      shell-exec: 1.0.2
     dev: true
 
   /@types/lodash-es@4.17.8:
@@ -1347,7 +1357,7 @@ packages:
       birpc: 0.2.12
       estree-walker: 2.0.2
       magic-string: 0.30.1
-      vite: 4.3.9(@types/node@18.17.1)
+      vite: 4.3.9(@types/node@18.17.1)(terser@5.19.2)
       vite-hot-client: 0.2.1(vite@4.3.9)
     dev: true
 
@@ -1358,7 +1368,7 @@ packages:
       vite: ^4.0.0
       vue: ^3.2.25
     dependencies:
-      vite: 4.3.9(@types/node@18.17.1)
+      vite: 4.3.9(@types/node@18.17.1)(terser@5.19.2)
       vue: 3.3.4
     dev: true
 
@@ -1772,7 +1782,7 @@ packages:
     resolution: {integrity: sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==}
     dev: true
 
-  /NeteaseCloudMusicApi@4.9.2(patch_hash=arp7zzpik33ojjf2ontfqfpwu4):
+  /NeteaseCloudMusicApi@4.9.2(patch_hash=3qaq5ludvnh4xx7tn7ohvwlkhi):
     resolution: {integrity: sha512-NXCYxKHXpkLp3jmZCk7EPa0fYU1cq9Uy8bg9LOGKleongH/uUmAQRAnn0MHQsss0V/ipUMwIJHPY1L4czxd/xg==}
     engines: {node: '>=12'}
     hasBin: true
@@ -2153,7 +2163,6 @@ packages:
 
   /buffer-from@1.1.2:
     resolution: {integrity: sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==}
-    dev: true
 
   /buffer@5.7.1:
     resolution: {integrity: sha512-EHcyIPBQ4BSGlvjB16k5KgAJ27CIsHY/2JBmCRReo48y9rQ3MaUzWX3KVlBa4U7MyX02HdVj0K7C3WaB3ju7FQ==}
@@ -2347,7 +2356,6 @@ packages:
 
   /commander@2.20.3:
     resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==}
-    dev: true
 
   /commander@4.1.1:
     resolution: {integrity: sha512-NOKm8xhkzAjzFx8B2v5OAHT+u5pRQc2UCa2Vq9jYL/31o2wi9mxBA7LIFs3sV5VSC49z6pEhfbMULvShKj26WA==}
@@ -3242,6 +3250,10 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
+  /get-them-args@1.3.2:
+    resolution: {integrity: sha512-LRn8Jlk+DwZE4GTlDbT3Hikd1wSHgLMme/+7ddlqKd7ldwR6LjJgTVWzBnR01wnYGe4KgrXjg287RaI22UHmAw==}
+    dev: false
+
   /get-tsconfig@4.6.2:
     resolution: {integrity: sha512-E5XrT4CbbXcXWy+1jChlZmrmCwd5KGx502kDCXJJ7y898TtWW9FwoG5HfOLVRKmlmDGkWN2HM9Ho+/Y8F0sJDg==}
     dependencies:
@@ -3835,6 +3847,14 @@ packages:
       readable-stream: 2.3.8
       setimmediate: 1.0.5
     dev: true
+
+  /kill-port@2.0.1:
+    resolution: {integrity: sha512-e0SVOV5jFo0mx8r7bS29maVWp17qGqLBZ5ricNSajON6//kmb7qqqNnml4twNE8Dtj97UQD+gNFOaipS/q1zzQ==}
+    hasBin: true
+    dependencies:
+      get-them-args: 1.3.2
+      shell-exec: 1.0.2
+    dev: false
 
   /kind-of@6.0.3:
     resolution: {integrity: sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==}
@@ -5106,6 +5126,9 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
+  /shell-exec@1.0.2:
+    resolution: {integrity: sha512-jyVd+kU2X+mWKMmGhx4fpWbPsjvD53k9ivqetutVW/BQ+WIZoDoP4d8vUMGezV6saZsiNoW2f9GIhg9Dondohg==}
+
   /shell-quote@1.8.1:
     resolution: {integrity: sha512-6j1W9l1iAs/4xYBI1SYOVZyFcCis9b4KCLQ8fgAGG07QvzaRLVVRQvAy85yNmmZSjYjg4MWh4gNvlPujU/5LpA==}
     dev: true
@@ -5190,7 +5213,6 @@ packages:
     dependencies:
       buffer-from: 1.1.2
       source-map: 0.6.1
-    dev: true
 
   /source-map@0.6.1:
     resolution: {integrity: sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==}
@@ -5402,6 +5424,16 @@ packages:
       commander: 2.20.3
       source-map-support: 0.5.21
     dev: true
+
+  /terser@5.19.2:
+    resolution: {integrity: sha512-qC5+dmecKJA4cpYxRa5aVkKehYsQKc+AHeKl0Oe62aYjBL8ZA33tTljktDHJSaxxMnbI5ZYw+o/S2DxxLu8OfA==}
+    engines: {node: '>=10'}
+    hasBin: true
+    dependencies:
+      '@jridgewell/source-map': 0.3.5
+      acorn: 8.9.0
+      commander: 2.20.3
+      source-map-support: 0.5.21
 
   /text-table@0.2.0:
     resolution: {integrity: sha512-N+8UisAXDGk8PFXP4HAzVR9nbfmVJ3zYLAWiTIoqC5v5isinhr+r5uaO8+7r3BMfuNIufIsA7RdpVgacC2cSpw==}
@@ -5623,7 +5655,7 @@ packages:
     peerDependencies:
       vite: ^2.6.0 || ^3.0.0 || ^4.0.0
     dependencies:
-      vite: 4.3.9(@types/node@18.17.1)
+      vite: 4.3.9(@types/node@18.17.1)(terser@5.19.2)
     dev: true
 
   /vite-plugin-inspect@0.7.33(vite@4.3.9):
@@ -5639,7 +5671,7 @@ packages:
       open: 9.1.0
       picocolors: 1.0.0
       sirv: 2.0.3
-      vite: 4.3.9(@types/node@18.17.1)
+      vite: 4.3.9(@types/node@18.17.1)(terser@5.19.2)
     transitivePeerDependencies:
       - rollup
       - supports-color
@@ -5656,7 +5688,7 @@ packages:
       birpc: 0.2.12
       execa: 7.2.0
       sirv: 2.0.3
-      vite: 4.3.9(@types/node@18.17.1)
+      vite: 4.3.9(@types/node@18.17.1)(terser@5.19.2)
       vite-plugin-inspect: 0.7.33(vite@4.3.9)
       vite-plugin-vue-inspector: 3.5.0(vite@4.3.9)
     transitivePeerDependencies:
@@ -5680,7 +5712,7 @@ packages:
       kolorist: 1.8.0
       magic-string: 0.30.1
       shell-quote: 1.8.1
-      vite: 4.3.9(@types/node@18.17.1)
+      vite: 4.3.9(@types/node@18.17.1)(terser@5.19.2)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -5695,13 +5727,13 @@ packages:
       '@vuetify/loader-shared': 1.7.1(vue@3.3.4)(vuetify@3.3.6)
       debug: 4.3.4(supports-color@8.1.1)
       upath: 2.0.1
-      vite: 4.3.9(@types/node@18.17.1)
+      vite: 4.3.9(@types/node@18.17.1)(terser@5.19.2)
       vuetify: 3.3.6(typescript@5.1.3)(vite-plugin-vuetify@1.0.2)(vue@3.3.4)
     transitivePeerDependencies:
       - supports-color
       - vue
 
-  /vite@4.3.9(@types/node@18.17.1):
+  /vite@4.3.9(@types/node@18.17.1)(terser@5.19.2):
     resolution: {integrity: sha512-qsTNZjO9NoJNW7KnOrgYwczm0WctJ8m/yqYAMAK9Lxt4SoySUfS5S8ia9K7JHpa3KEeMfyF8LoJ3c5NeBJy6pg==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
@@ -5730,6 +5762,7 @@ packages:
       esbuild: 0.17.19
       postcss: 8.4.24
       rollup: 3.26.0
+      terser: 5.19.2
     optionalDependencies:
       fsevents: 2.3.2
 

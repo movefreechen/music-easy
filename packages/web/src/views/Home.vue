@@ -76,7 +76,7 @@ async function featchDailySongs() {
 }
 
 watchEffect(() => {
-    if (isLogin || isAnonimous) {
+    if (isLogin.value || isAnonimous.value) {
         switch (toggle.value) {
             case 0:
                 fetchDailyList()

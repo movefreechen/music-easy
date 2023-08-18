@@ -35,4 +35,15 @@ export default defineConfig({
             plugins: [taildwindcss, autoprefixer],
         },
     },
+    build: {
+        minify: 'terser',
+        sourcemap: false,
+        terserOptions: {
+            compress: {
+                drop_console: true,
+                drop_debugger: true,
+            },
+            keep_classnames: true,
+        },
+    },
 })

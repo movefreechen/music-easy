@@ -2,7 +2,7 @@ diff --git a/CHANGELOG.MD b/CHANGELOG.MD
 deleted file mode 100644
 index a67472ece42b6b5d032b8a54d285537d7413c979..0000000000000000000000000000000000000000
 diff --git a/package.json b/package.json
-index cd8608a1af5562ba20c3cfe7c82fdbc639e1e40b..69728f711e00c8511ae998e581a22d9eaae9a927 100644
+index cd8608a1af5562ba20c3cfe7c82fdbc639e1e40b..7db0e0fc7d72925bc0c171fceeb5e30b121f2628 100644
 --- a/package.json
 +++ b/package.json
 @@ -67,6 +67,7 @@
@@ -14,18 +14,20 @@ index cd8608a1af5562ba20c3cfe7c82fdbc639e1e40b..69728f711e00c8511ae998e581a22d9e
      "pac-proxy-agent": "^7.0.0",
      "qrcode": "^1.4.4",
 diff --git a/server.js b/server.js
-index befa2866fb91430f82953314a92e43b6ccae33d9..f9a4a96588c816ff417852e0de7840d6bcbee7cc 100644
+index befa2866fb91430f82953314a92e43b6ccae33d9..75bec7648acf89e06d1dd45e892281852acd4431 100644
 --- a/server.js
 +++ b/server.js
-@@ -9,6 +9,7 @@ const { cookieToJson } = require('./util/index')
+@@ -8,7 +8,9 @@ const cache = require('./util/apicache').middleware
+ const { cookieToJson } = require('./util/index')
  const fileUpload = require('express-fileupload')
  const decode = require('safe-decode-uri-component')
++const mri = require('mri')
  
 +const argv = mri(process.argv.slice(2))
  /**
   * The version check result.
   * @readonly
-@@ -141,6 +142,9 @@ async function consturctServer(moduleDefs) {
+@@ -141,6 +143,9 @@ async function consturctServer(moduleDefs) {
     */
    app.use((req, res, next) => {
      if (req.path !== '/' && !req.path.includes('.')) {
@@ -35,6 +37,23 @@ index befa2866fb91430f82953314a92e43b6ccae33d9..f9a4a96588c816ff417852e0de7840d6
        res.set({
          'Access-Control-Allow-Credentials': true,
          'Access-Control-Allow-Origin':
+@@ -288,7 +293,7 @@ async function consturctServer(moduleDefs) {
+  * @returns {Promise<import('express').Express & ExpressExtension>}
+  */
+ async function serveNcmApi(options) {
+-  const port = Number(options.port || process.env.PORT || '3000')
++  const port = Number(argv.port || options.port || process.env.PORT || '3000')
+   const host = options.host || process.env.HOST || ''
+ 
+   const checkVersionSubmission =
+@@ -310,6 +315,7 @@ async function serveNcmApi(options) {
+   /** @type {import('express').Express & ExpressExtension} */
+   const appExt = app
+   appExt.server = app.listen(port, host, () => {
++    process.send('server started successfully')
+     console.log(`server running @ http://${host ? host : 'localhost'}:${port}`)
+   })
+ 
 diff --git a/util/request.js b/util/request.js
 index e30a404c32a5afb0b70346bab5ddd0a73811a387..6bf1628c01f2be3a61563a36ebbadfa8a1b0de10 100644
 --- a/util/request.js

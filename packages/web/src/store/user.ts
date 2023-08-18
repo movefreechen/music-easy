@@ -69,6 +69,8 @@ const useUserStore = defineStore('user', () => {
                     isLogin: true,
                 }
                 isAnonimous.value = false
+            } else {
+                throw new Error()
             }
         } catch (error) {
             $setAnonimous()

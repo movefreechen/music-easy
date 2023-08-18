@@ -4,6 +4,7 @@ import * as fs from 'fs'
 import * as Handlebars from 'handlebars'
 import { fork } from 'child_process'
 import type { ChildProcess } from 'child_process'
+import kill from 'kill-port'
 
 let apiServe: ChildProcess | null = null
 let controller: AbortController | null = null
@@ -35,14 +36,31 @@ export function activate(context: vscode.ExtensionContext) {
                         .then((select) => {
                             if (select === '重启') {
                                 abortApiServe()
-                                runApiServe(context)
+                                let port = vscode.workspace
+                                    .getConfiguration()
+                                    .get<number>('music.easy.port')
+
+                                port = !isNaN(parseInt(port + '')) ? port : 4000
+                                try {
+                                    kill(port!)
+                                } catch (error) {
+                                } finally {
+                                    runApiServe(context)
+                                }
                             } else {
                                 panel!.dispose()
                             }
                         })
             })
 
-            panel.webview.html = getHtmlForWebview(context, panel.webview)
+            apiServe!.on('message', (m) => {
+                if (m === 'server started successfully') {
+                    panel!.webview.html = getHtmlForWebview(
+                        context,
+                        panel!.webview
+                    )
+                }
+            })
 
             panel.webview.onDidReceiveMessage((message) => {
                 handleMessage(message, context, panel!)
@@ -111,11 +129,6 @@ const getHtmlForWebview = (
 
     const cssUris: string[] = []
     const scriptUris: string[] = []
-    const mdiFontUrl = makeUriAsWebviewUri(
-        context,
-        webview,
-        resolve('node_modules/@mdi/font/css/materialdesignicons.css', context)
-    )
     if (process.env.NODE_ENV === 'production') {
         const assets = fs.readdirSync(resolve('./dist/assets', context))
         for (const asset of assets) {
@@ -131,10 +144,19 @@ const getHtmlForWebview = (
             }
         }
     } else {
+        // 开发环境加载mdi字体库
+        cssUris.push(
+            makeUriAsWebviewUri(
+                context,
+                webview,
+                resolve(
+                    'node_modules/@mdi/font/css/materialdesignicons.css',
+                    context
+                )
+            )
+        )
         scriptUris.push('http://localhost:5173/src/main.ts')
     }
-
-    cssUris.push(mdiFontUrl)
 
     const html = template({
         scriptUris,
@@ -154,7 +176,7 @@ function runApiServe(context: vscode.ExtensionContext) {
     const proxy = vscode.workspace
         .getConfiguration()
         .get<string>('music.easy.proxy')
-    const port = vscode.workspace
+    let port = vscode.workspace
         .getConfiguration()
         .get<number>('music.easy.port')
 
@@ -162,11 +184,10 @@ function runApiServe(context: vscode.ExtensionContext) {
         argv.push('--proxy=' + proxy.trim())
     }
 
-    if (!isNaN(parseInt(port + ''))) {
-        argv.push('--port=' + port)
-    }
+    port = !isNaN(parseInt(port + '')) ? port : 4000
+    argv.push('--port=' + port)
 
-    apiServe = fork(server, argv, { signal, silent: false })
+    apiServe = fork(server, argv, { signal })
 }
 
 function abortApiServe() {

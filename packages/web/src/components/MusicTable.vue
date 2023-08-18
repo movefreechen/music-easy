@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { VDataTableVirtual } from 'vuetify/labs/VDataTable'
+import { VDataTable } from 'vuetify/labs/VDataTable'
 import { VSkeletonLoader } from 'vuetify/labs/VSkeletonLoader'
 import type { PropType } from 'vue'
 import type { Artist } from '@/types'
@@ -160,7 +160,7 @@ onMounted(() => {
         type="article"
         v-show="props.loading"
     ></v-skeleton-loader>
-    <v-data-table-virtual
+    <v-data-table
         fixed-header
         :headers="headers"
         :items="props.items"
@@ -222,7 +222,7 @@ onMounted(() => {
                 {{ a.name }}
             </span>
         </template>
-    </v-data-table-virtual>
+    </v-data-table>
     <play-list-detail
         v-model="showListDetail"
         :id="listDetailId"

@@ -49,6 +49,7 @@
   },
   "devDependencies": {
     "@types/glob": "^8.1.0",
+    "@types/kill-port": "^2.0.0",
     "@types/mocha": "^10.0.1",
     "@types/node": "20.2.5",
     "@types/vscode": "^1.79.0",
@@ -78,6 +79,7 @@
     "crypto": "^1.0.1",
     "dayjs": "^1.11.9",
     "handlebars": "^4.7.7",
+    "kill-port": "^2.0.1",
     "mri": "^1.2.0",
     "pac-proxy-agent": "^6.0.3",
     "tunnel": "^0.0.6",

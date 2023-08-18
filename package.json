@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "pnpm run -C packages/web build && pnpm run -C packages/extension package"
+    "build": "pnpm run -C packages/web build && pnpm run -C packages/extension buildApi && pnpm run -C packages/extension package"
   },
   "keywords": [],
   "author": "",

@@ -20,6 +20,7 @@ if (!window.acquireVsCodeApi || typeof window.acquireVsCodeApi !== 'function') {
 }
 
 const vscode = acquireVsCodeApi()
+const listen = window.addEventListener
 
 export default function useMessage() {
     const callbackMap: Map<Function, string> = new Map()
@@ -44,11 +45,11 @@ export default function useMessage() {
     }
 
     onMounted(() => {
-        window.addEventListener('message', handleEvent)
+        listen('message', handleEvent)
     })
 
     onUnmounted(() => {
-        window.removeEventListener('message', handleEvent)
+        listen('message', handleEvent)
     })
 
     return { on, post, remove }
