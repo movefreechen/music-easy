@@ -78,6 +78,17 @@ watch(
         immediate: true,
     }
 )
+
+const zoom = ref(1)
+watch(
+    zoom,
+    (nval) => {
+        document.documentElement.setAttribute('style', `zoom: ${nval}`)
+    },
+    {
+        immediate: true,
+    }
+)
 </script>
 
 <template>
@@ -125,6 +136,45 @@ watch(
                                 </v-list-item>
                             </v-list>
                         </v-sheet>
+                        <v-select
+                            label="显示比例"
+                            :items="[
+                                {
+                                    title: '200%',
+                                    value: 2,
+                                },
+                                {
+                                    title: '150%',
+                                    value: 1.5,
+                                },
+                                {
+                                    title: '120%',
+                                    value: 1.2,
+                                },
+                                {
+                                    title: '100%',
+                                    value: 1,
+                                },
+                                {
+                                    title: '80%',
+                                    value: 0.8,
+                                },
+                                {
+                                    title: '50%',
+                                    value: 0.5,
+                                },
+                                {
+                                    title: '30%',
+                                    value: 0.3,
+                                },
+                            ]"
+                            density="compact"
+                            variant="solo"
+                            single-line
+                            hide-details
+                            class="w-[30px] w-full"
+                            v-model="zoom"
+                        ></v-select>
                     </v-col>
 
                     <v-col cols="10">
