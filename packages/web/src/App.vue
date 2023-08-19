@@ -95,7 +95,7 @@ watch(
     <v-app id="inspire">
         <notifications position="top center" />
         <v-main class="bg-grey-lighten-3">
-            <v-container>
+            <v-container :fluid="true">
                 <v-row>
                     <v-col cols="2">
                         <v-sheet rounded="lg">

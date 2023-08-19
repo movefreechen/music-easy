@@ -168,6 +168,7 @@ onMounted(() => {
         item-value="name"
         v-show="!props.loading"
         ref="tableRef"
+        :hide-default-footer="true"
     >
         <template #item.name="{ item }">
             <span class="cursor-pointer" @click="onListNameClick(item.raw.id)">
@@ -222,6 +223,7 @@ onMounted(() => {
                 {{ a.name }}
             </span>
         </template>
+        <template #bottom></template>
     </v-data-table>
     <play-list-detail
         v-model="showListDetail"

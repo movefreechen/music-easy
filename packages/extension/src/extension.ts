@@ -144,17 +144,6 @@ const getHtmlForWebview = (
             }
         }
     } else {
-        // 开发环境加载mdi字体库
-        cssUris.push(
-            makeUriAsWebviewUri(
-                context,
-                webview,
-                resolve(
-                    'node_modules/@mdi/font/css/materialdesignicons.css',
-                    context
-                )
-            )
-        )
         scriptUris.push('http://localhost:5173/src/main.ts')
     }
 

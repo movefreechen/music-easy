@@ -21,7 +21,7 @@ const extensionConfig = {
         filename: 'extension.js',
         libraryTarget: 'commonjs2',
         clean: {
-            keep: /assets|fonts/,
+            keep: /assets/,
         },
     },
     externals: {
@@ -66,15 +66,7 @@ const extensionConfig = {
         new HtmlWebpackPlugin({
             template: 'index.html',
             inject: false,
-        }),
-        new CopyPlugin({
-            patterns: [
-                {
-                    from: 'public',
-                    to: 'public',
-                },
-            ],
-        }),
+        })
     ],
 }
 
