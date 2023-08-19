@@ -21,7 +21,7 @@ const extensionConfig = {
         filename: 'extension.js',
         libraryTarget: 'commonjs2',
         clean: {
-            keep: /assets|NeteaseCloudMusicApi/,
+            keep: /assets|fonts/,
         },
     },
     externals: {

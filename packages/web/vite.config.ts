@@ -65,6 +65,11 @@ export default defineConfig({
                     path.resolve(__dirname, 'dist/assets'),
                     path.resolve(__dirname, '../extension/dist/assets')
                 )
+
+                await fs.copy(
+                    path.resolve(__dirname, 'dist/fonts'),
+                    path.resolve(__dirname, '../extension/dist/fonts')
+                )
             },
         },
     ],
