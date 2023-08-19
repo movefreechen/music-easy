@@ -3,6 +3,7 @@
   "displayName": "music easy extension",
   "description": "",
   "publisher": "movefreechen",
+  "icon": "./logo.png",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.79.0"
