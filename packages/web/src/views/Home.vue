@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { Artist, PlayList } from '@/types'
+import type { Artist } from '@/types'
 import { _dailyPlaylist, _dailySongs } from '@/api/playlist'
 import useUserStore from '@/store/user'
 import { computed } from 'vue'
@@ -34,44 +34,36 @@ const total = ref(0)
 const paginationLength = computed(() => Math.floor(total.value / limit.value))
 
 // 每日推荐歌单
-const dailyList = ref<PlayList[]>([])
 async function fetchDailyList() {
     loading.value = true
     listType.value = 'playList'
     total.value = 0
-    if (!dailyList.value.length) {
-        const { recommend } = await _dailyPlaylist()
-        dailyList.value = recommend
-    }
 
-    items.value = dailyList.value
+    const { recommend } = await _dailyPlaylist()
+    items.value = recommend
     loading.value = false
 }
 
 // 每日推荐歌曲
-const dailySongs = ref<ItemSong[]>([])
 async function featchDailySongs() {
     loading.value = true
     listType.value = 'songList'
     total.value = 0
+    items.value = []
 
-    if (!dailySongs.value.length) {
-        const { dailySongs: ds, recommendReasons } = await _dailySongs()
-        dailySongs.value = []
-        ds.forEach((song, index) => {
-            song.recommendReason =
-                recommendReasons?.[index]?.reason ?? song.recommendReason
-            dailySongs.value.push({
-                name: song.name,
-                picUrl: song.al.picUrl,
-                artists: song.ar,
-                id: song.id,
-                album: song.al.name,
-            })
+    const { dailySongs: ds, recommendReasons } = await _dailySongs()
+    ds.forEach((song, index) => {
+        song.recommendReason =
+            recommendReasons?.[index]?.reason ?? song.recommendReason
+        items.value.push({
+            name: song.name,
+            picUrl: song.al.picUrl,
+            artists: song.ar,
+            id: song.id,
+            album: song.al.name,
         })
-    }
+    })
 
-    items.value = dailySongs.value
     loading.value = false
 }
 
@@ -173,52 +165,26 @@ function onArtistClick(artist: Artist) {
 <template>
     <div class="relative">
         <div class="flex items-center h-[30px] mb-3">
-            <v-select
-                label="搜索选项"
-                :items="[
-                    {
-                        title: '歌曲',
-                        value: 1,
-                    },
-                    {
-                        title: '歌单',
-                        value: 1000,
-                    },
-                ]"
-                density="compact"
-                variant="solo"
-                single-line
-                hide-details
-                v-model="searchType"
-                class="w-[30px]"
-            ></v-select>
-            <v-text-field
-                density="compact"
-                variant="solo"
-                label="关键词"
-                append-inner-icon="mdi-magnify"
-                single-line
-                hide-details
-                v-model="searchValue"
-                @click:append-inner="onSearch"
-                @keydown.enter="onSearch"
-            ></v-text-field>
+            <v-select label="搜索选项" :items="[
+                {
+                    title: '歌曲',
+                    value: 1,
+                },
+                {
+                    title: '歌单',
+                    value: 1000,
+                },
+            ]" density="compact" variant="solo" single-line hide-details v-model="searchType"
+                class="w-[30px]"></v-select>
+            <v-text-field density="compact" variant="solo" label="关键词" append-inner-icon="mdi-magnify" single-line
+                hide-details v-model="searchValue" @click:append-inner="onSearch" @keydown.enter="onSearch"></v-text-field>
         </div>
 
         <v-btn-toggle v-model="toggle" group rounded="0" wdith="100%">
             <v-btn :value="0"> 每日推荐歌单 </v-btn>
             <v-btn :value="1"> 每日推荐歌曲 </v-btn>
         </v-btn-toggle>
-        <MusicTable
-            :type="listType"
-            :items="items"
-            :loading="loading"
-            @artist-click="onArtistClick"
-        ></MusicTable>
-        <v-pagination
-            v-show="total > 0"
-            :length="paginationLength"
-            v-model:model-value="page"
-        ></v-pagination>
+        <MusicTable :type="listType" :items="items" :loading="loading" @artist-click="onArtistClick"></MusicTable>
+        <v-pagination v-show="total > 0" :length="paginationLength" v-model:model-value="page"></v-pagination>
     </div>
 </template>
