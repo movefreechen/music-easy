@@ -66,7 +66,7 @@ const extensionConfig = {
         new HtmlWebpackPlugin({
             template: 'index.html',
             inject: false,
-        })
+        }),
     ],
 }
 

@@ -25,6 +25,10 @@ export function activate(context: vscode.ExtensionContext) {
             )
 
             runApiServe(context)
+            panel.iconPath = vscode.Uri.joinPath(
+                context.extensionUri,
+                'logo.svg'
+            )
 
             panel.webview.onDidReceiveMessage((message) => {
                 handleMessage(message, context, panel!)

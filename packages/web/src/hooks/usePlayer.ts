@@ -92,7 +92,9 @@ export default function usePlayer() {
 
         const ids: number[] = []
         const songs: Record<number, AplayerSong> = {}
-        list.forEach(({ songInfo }) => {
+        for (let { songInfo } of list) {
+            if (!songInfo.id) continue
+
             ids.push(songInfo.id)
             songs[songInfo.id] = {
                 id: songInfo.id,
@@ -101,7 +103,8 @@ export default function usePlayer() {
                 cover: songInfo.al.picUrl,
                 url: '',
             }
-        })
+        }
+
         const urls = await fetchSongUrl(ids)
         urls.forEach((item) => {
             if (songs[item.id]) {
