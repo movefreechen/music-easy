@@ -9,59 +9,22 @@ import kill from 'kill-port'
 let apiServe: ChildProcess | null = null
 let controller: AbortController | null = null
 let signal: AbortSignal
+let panel: null | vscode.WebviewPanel
 
 export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.commands.registerCommand('music.easy.start', () => {
-            let panel: null | vscode.WebviewPanel =
-                vscode.window.createWebviewPanel(
-                    'musicEasy',
-                    'Music Easy',
-                    vscode.ViewColumn.One,
-                    {
-                        enableScripts: true,
-                        retainContextWhenHidden: true
-                    }
-                )
+            panel = vscode.window.createWebviewPanel(
+                'musicEasy',
+                'Music Easy',
+                vscode.ViewColumn.One,
+                {
+                    enableScripts: true,
+                    retainContextWhenHidden: true,
+                }
+            )
 
             runApiServe(context)
-
-            apiServe!.on('exit', () => {
-                panel &&
-                    vscode.window
-                        .showWarningMessage(
-                            '音乐服务异常，是否重新启动服务？',
-                            '重启',
-                            '退出'
-                        )
-                        .then((select) => {
-                            if (select === '重启') {
-                                abortApiServe()
-                                let port = vscode.workspace
-                                    .getConfiguration()
-                                    .get<number>('music.easy.port')
-
-                                port = !isNaN(parseInt(port + '')) ? port : 4000
-                                try {
-                                    kill(port!)
-                                } catch (error) {
-                                } finally {
-                                    runApiServe(context)
-                                }
-                            } else {
-                                panel!.dispose()
-                            }
-                        })
-            })
-
-            apiServe!.on('message', (m) => {
-                if (m === 'server started successfully') {
-                    panel!.webview.html = getHtmlForWebview(
-                        context,
-                        panel!.webview
-                    )
-                }
-            })
 
             panel.webview.onDidReceiveMessage((message) => {
                 handleMessage(message, context, panel!)
@@ -178,6 +141,47 @@ function runApiServe(context: vscode.ExtensionContext) {
     argv.push('--port=' + port)
 
     apiServe = fork(server, argv, { signal })
+    apiServe.on('exit', () => {
+        panel &&
+            vscode.window
+                .showWarningMessage(
+                    '音乐服务启动异常或端口被占用，是否重新启动服务？',
+                    '重启',
+                    '退出'
+                )
+                .then((select) => {
+                    if (select === '重启') {
+                        abortApiServe()
+                        let port = vscode.workspace
+                            .getConfiguration()
+                            .get<number>('music.easy.port')
+
+                        port = !isNaN(parseInt(port + '')) ? port : 4000
+                        vscode.window.showInformationMessage('服务重启中')
+                        kill(port!)
+                            .then(() => {
+                                runApiServe(context)
+                                vscode.window.showInformationMessage(
+                                    '服务重启成功'
+                                )
+                            })
+                            .catch((error) => {
+                                console.warn(error)
+                                vscode.window.showInformationMessage(
+                                    error.message ?? error
+                                )
+                            })
+                    } else {
+                        panel!.dispose()
+                    }
+                })
+    })
+
+    apiServe.on('message', (m) => {
+        if (m === 'server started successfully') {
+            panel!.webview.html = getHtmlForWebview(context, panel!.webview)
+        }
+    })
 }
 
 function abortApiServe() {
