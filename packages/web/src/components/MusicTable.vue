@@ -169,6 +169,7 @@ onMounted(() => {
         v-show="!props.loading"
         ref="tableRef"
         :hide-default-footer="true"
+        :items-per-page="-1"
     >
         <template #item.name="{ item }">
             <span class="cursor-pointer" @click="onListNameClick(item.raw.id)">
