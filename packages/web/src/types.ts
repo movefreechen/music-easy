@@ -1,6 +1,8 @@
 export enum MsgCommand {
     GET_COOKIE,
     SAVE_COOKIE,
+    GET_ZOOM,
+    SET_ZOOM,
 }
 
 export type Message = {

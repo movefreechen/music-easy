@@ -6,6 +6,9 @@ import { fork } from 'child_process'
 import type { ChildProcess } from 'child_process'
 import kill from 'kill-port'
 
+const COOKIE_KEY = 'MUSIC_COOKIE'
+const ZOOM_KEY = 'MUSIC_ZOOM'
+
 let apiServe: ChildProcess | null = null
 let controller: AbortController | null = null
 let signal: AbortSignal
@@ -45,6 +48,8 @@ export function activate(context: vscode.ExtensionContext) {
 enum MsgCommand {
     GET_COOKIE,
     SAVE_COOKIE,
+    GET_ZOOM,
+    SET_ZOOM,
 }
 
 type Message = {
@@ -60,12 +65,23 @@ function handleMessage(
     if (command === MsgCommand.GET_COOKIE) {
         return panel.webview.postMessage({
             command: MsgCommand.GET_COOKIE,
-            data: cookieGet(context),
+            data: globalStateGet(COOKIE_KEY, context),
         })
     }
 
     if (command === MsgCommand.SAVE_COOKIE) {
-        cookieSave(data, context)
+        globalStateSave(COOKIE_KEY, data, context)
+    }
+
+    if (command === MsgCommand.GET_ZOOM) {
+        return panel.webview.postMessage({
+            command: MsgCommand.GET_COOKIE,
+            data: globalStateGet(ZOOM_KEY, context),
+        })
+    }
+
+    if (command === MsgCommand.SET_ZOOM) {
+        globalStateSave(ZOOM_KEY, data, context)
     }
 }
 
@@ -196,13 +212,16 @@ function abortApiServe() {
     } catch (error) {}
 }
 
-const COOKIE_KEY = 'MUSIC_COOKIE'
-function cookieSave(cookie: string, context: vscode.ExtensionContext) {
-    context.globalState.update(COOKIE_KEY, cookie)
+function globalStateGet(key: string, context: vscode.ExtensionContext) {
+    return context.globalState.get(key)
 }
 
-function cookieGet(context: vscode.ExtensionContext) {
-    return context.globalState.get(COOKIE_KEY)
+function globalStateSave(
+    key: string,
+    value: any,
+    context: vscode.ExtensionContext
+) {
+    context.globalState.update(key, value)
 }
 
 // This method is called when your extension is deactivated

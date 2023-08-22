@@ -11,3 +11,5 @@ export const SEARCH_TYPE = {
     LRC: 1006,
     RADIO: 1009,
 } as const
+
+export const HTML_ZOOM = 'HTML_ZOOM'

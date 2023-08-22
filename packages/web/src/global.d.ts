@@ -19,7 +19,8 @@ declare module 'APlayer' {
         lrc?: string
         theme?: string
         type?: string
-        customAudioType?: Record<string, void>
+        customAudioType?: Record<string, void>;
+        [key: string]: any
     }
 
     interface APlayerOptions {

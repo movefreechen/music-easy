@@ -88,7 +88,11 @@ export default function usePlayer() {
 
     async function playIntelligence(songId: number) {
         const pl = await _dailyPlaylist()
-        const list = await _intelligenceList(songId, pl.recommend[0].id, songId)
+        const list = await _intelligenceList(
+            songId,
+            pl.recommend[Math.floor(Math.random() * pl.recommend.length)].id, // 随机取一个推荐歌单作为参数
+            songId
+        )
 
         const ids: number[] = []
         const songs: Record<number, AplayerSong> = {}

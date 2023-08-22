@@ -6,7 +6,11 @@ import useUserStore from '@/store/user'
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { watch } from 'vue'
+import { HTML_ZOOM } from './constant'
+import useMessage from './hooks/useMessage'
+import { MsgCommand } from './types'
 
+const { on, post } = useMessage()
 const userStore = useUserStore()
 const profile = computed(() => userStore.profile)
 
@@ -79,11 +83,25 @@ watch(
     }
 )
 
-const zoom = ref(1)
+const zoom = ref(window.localStorage.getItem(HTML_ZOOM) || 1)
+onMounted(() => {
+    post({
+        command: MsgCommand.GET_ZOOM,
+    })
+    on((msg) => {
+        if (msg.command === MsgCommand.GET_ZOOM) {
+            zoom.value = parseInt(msg.data) || 1
+        }
+    })
+})
 watch(
     zoom,
     (nval) => {
         document.documentElement.setAttribute('style', `zoom: ${nval}`)
+        post({
+            command: MsgCommand.SET_ZOOM,
+            data: nval,
+        })
     },
     {
         immediate: true,

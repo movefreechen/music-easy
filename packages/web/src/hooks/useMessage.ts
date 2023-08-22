@@ -32,7 +32,7 @@ export default function useMessage() {
         })
     }
 
-    function on(callback: Function) {
+    function on(callback: (msg: Message) => void) {
         callbackMap.set(callback, '')
     }
 
@@ -40,7 +40,7 @@ export default function useMessage() {
         vscode.postMessage(msg)
     }
 
-    function remove(callback: Function) {
+    function remove(callback: (msg: Message) => void) {
         callbackMap.delete(callback)
     }
 
