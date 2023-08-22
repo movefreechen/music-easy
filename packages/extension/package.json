@@ -4,7 +4,7 @@
   "description": "表格风音乐播放器",
   "publisher": "movefreechen",
   "icon": "./logo.png",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "engines": {
     "vscode": "^1.79.0"
   },
