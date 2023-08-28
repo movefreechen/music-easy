@@ -99,6 +99,10 @@ const useUserStore = defineStore('user', () => {
     async function $setAnonimous() {
         const { cookie: c } = await _anonimous()
         isAnonimous.value = true
+        profile.value.avatarUrl = ''
+        profile.value.isLogin = false
+        profile.value.nickname = ''
+        profile.value.userId = undefined
         $setCookie(c)
     }
 
@@ -110,6 +114,7 @@ const useUserStore = defineStore('user', () => {
         $checkLoginStatus,
         $setCookie,
         $removeCookie,
+        $setAnonimous,
     }
 })
 

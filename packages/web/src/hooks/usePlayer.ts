@@ -170,6 +170,19 @@ export default function usePlayer() {
         getSongLyric()
     }
 
+    async function onError() {
+        aplayerInstance.pause()
+        const song = currentSong()
+        if (song?.id) {
+            const urls = await fetchSongUrl(song.id)
+            song.url = urls[0].url
+            aplayerInstance.play()
+        } else {
+            aplayerInstance.skipForward()
+            aplayerInstance.play()
+        }
+    }
+
     onMounted(() => {
         if (!aplayerInstance) {
             aplayerInstance = new APlayer({
@@ -181,6 +194,7 @@ export default function usePlayer() {
             })
 
             aplayerInstance.on('loadstart', onLoadstart)
+            aplayerInstance.on('error', onError)
         }
     })
 

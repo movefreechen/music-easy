@@ -37,6 +37,10 @@ export function _loginQrCheck(key: string): Promise<{
     })
 }
 
+export function _logout() {
+    return request('/logout')
+}
+
 // profile 返回null 是游客状态
 export function _loginStatus(): Promise<{
     profile: {

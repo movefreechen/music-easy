@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { _loginQrCheck, _loginQrCreate, _loginQrKey } from '@/api/user'
+import { _loginQrCheck, _loginQrCreate, _loginQrKey, _logout } from '@/api/user'
 import { ref } from 'vue'
 import { onMounted } from 'vue'
 import useUserStore from '@/store/user'
@@ -9,9 +9,12 @@ import { watch } from 'vue'
 import { HTML_ZOOM } from './constant'
 import useMessage from './hooks/useMessage'
 import { MsgCommand } from './types'
+import useConfirm from './hooks/useConfirm'
 
 const { on, post } = useMessage()
+const $Confirm = useConfirm()
 const userStore = useUserStore()
+
 const profile = computed(() => userStore.profile)
 
 onMounted(async () => {
@@ -59,6 +62,17 @@ function qrCodeCheckLoop(unikey: string) {
             showQrCode.value = false
         }
     }, 2000)
+}
+
+async function logout() {
+    try {
+        await $Confirm('确认退出登录？')
+        console.log(1)
+        await _logout()
+        userStore.$setAnonimous()
+    } catch (error) {
+        console.log(error)
+    }
 }
 
 const route = useRoute()
@@ -144,7 +158,7 @@ watch(
                                     >
                                         登录
                                     </v-list-item-title>
-                                    <v-list-item-title v-else>
+                                    <v-list-item-title v-else @click="logout">
                                         <v-avatar
                                             class="mr-[5px]"
                                             :image="profile.avatarUrl"
