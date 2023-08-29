@@ -6,10 +6,13 @@ import {
     _personalized,
     _intelligenceList,
     _dailyPlaylist,
+    _personalFM,
 } from '@/api/playlist'
 import { _songUrl, _songDetail, _songLyric } from '@/api/song'
 
 let aplayerInstance: APlayer
+let isFM: boolean // 私人fm模式
+let loading: boolean
 
 interface AplayerSong {
     id?: number
@@ -34,6 +37,7 @@ async function fetchSongUrl(id: number | number[]) {
 
 export default function usePlayer() {
     async function playListById(id: number, songId?: number) {
+        isFM = false
         aplayerInstance.pause()
         const { songs: s } = await _playlistTrackAll(id)
         const ids: number[] = []
@@ -69,6 +73,7 @@ export default function usePlayer() {
     }
 
     async function playSongById(id: number) {
+        isFM = false
         aplayerInstance.pause()
         const [url, { songs }] = await Promise.all([
             fetchSongUrl(id),
@@ -87,6 +92,7 @@ export default function usePlayer() {
     }
 
     async function playIntelligence(songId: number) {
+        isFM = false
         const pl = await _dailyPlaylist()
         const list = await _intelligenceList(
             songId,
@@ -144,9 +150,55 @@ export default function usePlayer() {
         aplayerInstance.play()
     }
 
+    async function playPersonalFM() {
+        if (loading) return
+
+        loading = true
+        const list = await _personalFM()
+        const ids: number[] = []
+        const songs: Record<number, AplayerSong> = {}
+        list.forEach((song) => {
+            ids.push(song.id)
+            songs[song.id] = {
+                id: song.id,
+                name: song.name,
+                artist: song.artists.map((a) => a.name).join(' '),
+                cover: song.album.picUrl,
+                url: '',
+            }
+        })
+        const urls = await fetchSongUrl(ids)
+        urls.forEach((item) => {
+            if (songs[item.id]) {
+                songs[item.id].url = item.url
+                songs[item.id].level = item.level
+            }
+        })
+
+        if (!isFM) {
+            aplayerInstance.list.clear()
+        }
+
+        isFM = true
+
+        const values = Object.values(songs)
+        aplayerInstance.list.add(values)
+        aplayerInstance.play()
+        Promise.resolve().then(() => {
+            loading = false
+        })
+    }
+
     function currentSong(): Audio | null {
         return (
             aplayerInstance.list?.audios?.[aplayerInstance.list?.index] ?? null
+        )
+    }
+
+    function isLastSong() {
+        return (
+            aplayerInstance.list.index ===
+            aplayerInstance.list.audios.length - 1
         )
     }
 
@@ -183,6 +235,22 @@ export default function usePlayer() {
         }
     }
 
+    function onPlay() {
+        if (!aplayerInstance.list?.audios.length) {
+            playPersonalFM()
+        }
+    }
+
+    function onTimeUpdate() {
+        // 私人fm 每次接口获取三首歌，最后一首快结束的时候获取下面三首
+        if (isFM && isLastSong()) {
+            const { duration, currentTime } = aplayerInstance.audio
+            if (duration - 20 <= currentTime) {
+                playPersonalFM()
+            }
+        }
+    }
+
     onMounted(() => {
         if (!aplayerInstance) {
             aplayerInstance = new APlayer({
@@ -195,6 +263,8 @@ export default function usePlayer() {
 
             aplayerInstance.on('loadstart', onLoadstart)
             aplayerInstance.on('error', onError)
+            aplayerInstance.on('play', onPlay)
+            aplayerInstance.on('timeupdate', onTimeUpdate)
         }
     })
 
