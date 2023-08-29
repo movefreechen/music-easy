@@ -46,6 +46,7 @@ export type Album = {
 export type Artist = {
     id: number
     name: string
+    picUrl?: string
 }
 
 export type Song = {

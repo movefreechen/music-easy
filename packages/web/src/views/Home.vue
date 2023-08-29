@@ -165,26 +165,52 @@ function onArtistClick(artist: Artist) {
 <template>
     <div class="relative">
         <div class="flex items-center h-[30px] mb-3">
-            <v-select label="搜索选项" :items="[
-                {
-                    title: '歌曲',
-                    value: 1,
-                },
-                {
-                    title: '歌单',
-                    value: 1000,
-                },
-            ]" density="compact" variant="solo" single-line hide-details v-model="searchType"
-                class="w-[30px]"></v-select>
-            <v-text-field density="compact" variant="solo" label="关键词" append-inner-icon="mdi-magnify" single-line
-                hide-details v-model="searchValue" @click:append-inner="onSearch" @keydown.enter="onSearch"></v-text-field>
+            <v-select
+                label="搜索选项"
+                :items="[
+                    {
+                        title: '歌曲',
+                        value: 1,
+                    },
+                    {
+                        title: '歌单',
+                        value: 1000,
+                    },
+                ]"
+                density="compact"
+                variant="solo"
+                single-line
+                hide-details
+                v-model="searchType"
+                class="w-[30px]"
+            ></v-select>
+            <v-text-field
+                density="compact"
+                variant="solo"
+                label="关键词"
+                append-inner-icon="mdi-magnify"
+                single-line
+                hide-details
+                v-model="searchValue"
+                @click:append-inner="onSearch"
+                @keydown.enter="onSearch"
+            ></v-text-field>
         </div>
 
         <v-btn-toggle v-model="toggle" group rounded="0" wdith="100%">
             <v-btn :value="0"> 每日推荐歌单 </v-btn>
             <v-btn :value="1"> 每日推荐歌曲 </v-btn>
         </v-btn-toggle>
-        <MusicTable :type="listType" :items="items" :loading="loading" @artist-click="onArtistClick"></MusicTable>
-        <v-pagination v-show="total > 0" :length="paginationLength" v-model:model-value="page"></v-pagination>
+        <MusicTable
+            :type="listType"
+            :items="items"
+            :loading="loading"
+            @artist-click="onArtistClick"
+        ></MusicTable>
+        <v-pagination
+            v-show="total > 0"
+            :length="paginationLength"
+            v-model:model-value="page"
+        ></v-pagination>
     </div>
 </template>

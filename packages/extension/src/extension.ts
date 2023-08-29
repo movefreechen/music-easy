@@ -63,7 +63,6 @@ function handleMessage(
 ) {
     const { command, data } = message
     if (command === MsgCommand.GET_COOKIE) {
-        console.error(globalStateGet(COOKIE_KEY, context))
         return panel.webview.postMessage({
             command: MsgCommand.GET_COOKIE,
             data: globalStateGet(COOKIE_KEY, context),

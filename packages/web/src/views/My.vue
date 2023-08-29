@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import usePlayer from '@/hooks/usePlayer'
-import { computed, onMounted, ref, watchEffect } from 'vue'
+import { computed, ref, watchEffect } from 'vue'
 import { _songDetail, _userLikeSongIdlist } from '@/api/song'
 import useUserStore from '@/store/user'
 import MusicTable, {
@@ -10,15 +10,11 @@ import MusicTable, {
 import { useRouter } from 'vue-router'
 import { Artist } from '@/types'
 import { SEARCH_TYPE } from '@/constant'
-import { _userPlayList, _personalFM } from '@/api/playlist'
+import { _userPlayList } from '@/api/playlist'
 import { _userSubcount } from '@/api/user'
 
 const router = useRouter()
 usePlayer()
-
-onMounted(() => {
-    _personalFM()
-})
 
 const userStore = useUserStore()
 const isLogin = computed(() => userStore.profile.isLogin)

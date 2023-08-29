@@ -130,7 +130,15 @@ export function _userPlayList(
     })
 }
 
-export function _personalFM() {
+export function _personalFM(): Promise<
+    {
+        album: Album
+        artists: Artist[]
+        id: number
+        reason: string
+        name: string
+    }[]
+> {
     return request({
         url: '/personal_fm',
     })
