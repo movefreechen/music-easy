@@ -63,6 +63,7 @@ function handleMessage(
 ) {
     const { command, data } = message
     if (command === MsgCommand.GET_COOKIE) {
+        console.error(globalStateGet(COOKIE_KEY, context))
         return panel.webview.postMessage({
             command: MsgCommand.GET_COOKIE,
             data: globalStateGet(COOKIE_KEY, context),
@@ -75,7 +76,7 @@ function handleMessage(
 
     if (command === MsgCommand.GET_ZOOM) {
         return panel.webview.postMessage({
-            command: MsgCommand.GET_COOKIE,
+            command: MsgCommand.GET_ZOOM,
             data: globalStateGet(ZOOM_KEY, context),
         })
     }

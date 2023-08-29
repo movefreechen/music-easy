@@ -129,3 +129,9 @@ export function _userPlayList(
         params: { uid: userId, offset, limit },
     })
 }
+
+export function _personalFM() {
+    return request({
+        url: '/personal_fm',
+    })
+}

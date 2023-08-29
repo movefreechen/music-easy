@@ -24,6 +24,7 @@ const useUserStore = defineStore('user', () => {
             if (cookie.value) {
                 return resolve()
             }
+
             if (!window.localStorage[USER_COOKIE_KEY]) {
                 post({
                     command: MsgCommand.GET_COOKIE,
@@ -83,7 +84,7 @@ const useUserStore = defineStore('user', () => {
         window.localStorage[USER_COOKIE_KEY] = c
         post({
             command: MsgCommand.SAVE_COOKIE,
-            data: cookie,
+            data: c,
         })
     }
 

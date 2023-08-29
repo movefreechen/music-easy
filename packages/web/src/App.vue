@@ -67,7 +67,7 @@ function qrCodeCheckLoop(unikey: string) {
 async function logout() {
     try {
         await $Confirm('确认退出登录？')
-        console.log(1)
+
         await _logout()
         userStore.$setAnonimous()
     } catch (error) {
@@ -104,23 +104,17 @@ onMounted(() => {
     })
     on((msg) => {
         if (msg.command === MsgCommand.GET_ZOOM) {
-            zoom.value = parseInt(msg.data) || 1
+            zoom.value = Number(msg.data) || 1
         }
     })
 })
-watch(
-    zoom,
-    (nval) => {
-        document.documentElement.setAttribute('style', `zoom: ${nval}`)
-        post({
-            command: MsgCommand.SET_ZOOM,
-            data: nval,
-        })
-    },
-    {
-        immediate: true,
-    }
-)
+watch(zoom, (nval) => {
+    document.documentElement.setAttribute('style', `zoom: ${nval}`)
+    post({
+        command: MsgCommand.SET_ZOOM,
+        data: nval + '',
+    })
+})
 </script>
 
 <template>

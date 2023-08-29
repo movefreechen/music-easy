@@ -1,5 +1,5 @@
 import ConfirmVue from '@/components/Confirm.vue'
-import { App, Ref, createApp, getCurrentInstance } from 'vue'
+import { createApp } from 'vue'
 import { createVuetify } from 'vuetify'
 
 const vuetify = createVuetify({
