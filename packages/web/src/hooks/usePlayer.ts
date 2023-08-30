@@ -195,13 +195,6 @@ export default function usePlayer() {
         )
     }
 
-    function isLastSong() {
-        return (
-            aplayerInstance.list.index ===
-            aplayerInstance.list.audios.length - 1
-        )
-    }
-
     // 加载歌词
     async function getSongLyric() {
         const audio = currentSong()
@@ -238,16 +231,13 @@ export default function usePlayer() {
     function onPlay() {
         if (!aplayerInstance.list?.audios.length) {
             playPersonalFM()
-        }
-    }
-
-    function onTimeUpdate() {
-        // 私人fm 每次接口获取三首歌，最后一首快结束的时候获取下面三首
-        if (isFM && isLastSong()) {
-            const { duration, currentTime } = aplayerInstance.audio
-            if (duration - 20 <= currentTime) {
-                playPersonalFM()
-            }
+        } else if (
+            isFM &&
+            aplayerInstance.list.index ===
+                aplayerInstance.list.audios.length - 2
+        ) {
+            // 私人fm 每次接口获取三首歌，播放最后二首快时获取下面三首
+            playPersonalFM()
         }
     }
 
@@ -264,7 +254,6 @@ export default function usePlayer() {
             aplayerInstance.on('loadstart', onLoadstart)
             aplayerInstance.on('error', onError)
             aplayerInstance.on('play', onPlay)
-            aplayerInstance.on('timeupdate', onTimeUpdate)
         }
     })
 
