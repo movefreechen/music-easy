@@ -6,6 +6,10 @@ import { PlayLevel } from '@/types'
 import { watch } from 'vue'
 import { watchEffect } from 'vue'
 import usePlayer from '@/hooks/usePlayer'
+import { _likeSong } from '@/api/song'
+import useMusicStore from '@/store/music'
+import useNotify from '@/hooks/useNotify'
+import { debounce } from 'lodash-es'
 
 defineOptions({
     name: 'play-list',
@@ -103,6 +107,29 @@ watch(
 function onMusicPlayClick(songId: number) {
     playListById(props.id, songId)
 }
+
+const notify = useNotify()
+const musicStore = useMusicStore()
+
+function likeSongCheck(id: number) {
+    return musicStore.userLikeSongIds.includes(id)
+}
+
+const likeSong = debounce(
+    async (id: number) => {
+        const isLike = musicStore.userLikeSongIds.includes(id)
+        await _likeSong(id, !isLike)
+        notify({
+            text: `${isLike ? '取消喜欢' : '喜欢'}成功`,
+        })
+        musicStore.$likeIdsUpdate()
+    },
+    1000,
+    {
+        leading: true,
+        trailing: false,
+    }
+)
 </script>
 
 <template>
@@ -154,6 +181,22 @@ function onMusicPlayClick(songId: number) {
                                 variant="text"
                                 @click="onMusicPlayClick(item.id)"
                             ></v-btn>
+                            <v-btn
+                                class="ms-2"
+                                variant="text"
+                                @click="likeSong(item.id)"
+                            >
+                                <template #append>
+                                    <v-icon
+                                        icon="mdi-heart"
+                                        :color="
+                                            likeSongCheck(item.id)
+                                                ? '#D32F2F'
+                                                : ''
+                                        "
+                                    ></v-icon>
+                                </template>
+                            </v-btn>
                         </template>
                     </v-list-item>
                 </template>

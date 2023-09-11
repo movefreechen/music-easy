@@ -12,6 +12,7 @@ import { Artist } from '@/types'
 import { SEARCH_TYPE } from '@/constant'
 import { _userPlayList } from '@/api/playlist'
 import { _userSubcount } from '@/api/user'
+import useMusicStore from '@/store/music'
 
 const router = useRouter()
 usePlayer()
@@ -19,6 +20,8 @@ usePlayer()
 const userStore = useUserStore()
 const isLogin = computed(() => userStore.profile.isLogin)
 const isAnonimous = computed(() => userStore.isAnonimous)
+
+const musicStore = useMusicStore()
 
 const loading = ref(true)
 
@@ -30,7 +33,7 @@ watchEffect(() => {
                 getMyLikeSongList()
                 break
             case 1:
-                getMyCreatedList()
+                getMyPlayList()
                 break
         }
     }
@@ -46,10 +49,10 @@ const paginationLength = computed(() => Math.floor(total.value / limit.value))
 
 const isIntelligence = ref(false)
 async function getMyLikeSongList() {
-    loading.value = true
+    if (!musicStore.userLikeSongIds.length) return
 
-    const { ids } = await _userLikeSongIdlist(userStore.profile.userId!)
-    const { songs } = await _songDetail(ids)
+    loading.value = true
+    const { songs } = await _songDetail(musicStore.userLikeSongIds)
     items.value = songs.map((song) => ({
         ...song,
         album: song.al.name,
@@ -62,7 +65,7 @@ async function getMyLikeSongList() {
 }
 
 // 我的歌单， 第一个是我喜欢的歌曲默认删除
-async function getMyCreatedList() {
+async function getMyPlayList() {
     loading.value = true
     listType.value = 'playList'
     const { subPlaylistCount, createdPlaylistCount } = await _userSubcount()
@@ -80,6 +83,8 @@ async function getMyCreatedList() {
         picUrl: item.coverImgUrl,
         creator: item.creator.userId,
         playcount: item.playCount,
+        subscribed: item.subscribed,
+        isOwner: item.creator.userId === userStore.profile.userId,
     })) as ItemList[]
 
     total.value = subPlaylistCount + createdPlaylistCount - 1

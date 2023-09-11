@@ -69,6 +69,37 @@ export function _playlistTrackAll(
     })
 }
 
+export function _playListDetail(id: number): Promise<{
+    playlist: {
+        id: number
+        name: string
+        coverImgUrl: string
+        userId: number
+        createTime: number
+        trackCount: number
+        playCount: number
+        subscribedCount: number
+        subscribed: boolean
+        creator: {
+            userId: number
+            nickname: string
+            avatarUrl: string
+        }
+        tracks: {
+            name: string
+            id: number
+            ar: Artist[]
+            alia: string[]
+            al: Album
+        }[]
+    }
+}> {
+    return request({
+        url: '/playlist/detail',
+        params: { id },
+    })
+}
+
 // 推荐歌单
 export function _personalized(limit = 30) {
     return request({
@@ -119,8 +150,11 @@ export function _userPlayList(
         trackCount: number
         creator: {
             userId: number
+            avatarUrl: string
+            nickname: string
         }
         coverImgUrl: string
+        subscribed: boolean
     }[]
     more: boolean
 }> {
@@ -141,5 +175,16 @@ export function _personalFM(): Promise<
 > {
     return request({
         url: '/personal_fm',
+    })
+}
+
+// 收藏/取消收藏歌单 t 1收藏 2取消
+export function _subscribe(t: 1 | 2, id: number) {
+    return request({
+        url: '/playlist/subscribe',
+        params: {
+            t,
+            id,
+        },
     })
 }

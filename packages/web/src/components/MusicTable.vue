@@ -6,8 +6,12 @@ import type { Artist } from '@/types'
 import { computed, ref } from 'vue'
 import usePlayer from '@/hooks/usePlayer'
 import PlayListDetail from '@/components/PlaylistDetail.vue'
-import { onMounted } from 'vue'
 import useUserStore from '@/store/user'
+import { debounce } from 'lodash-es'
+import { _playListDetail, _subscribe } from '@/api/playlist'
+import { _likeSong } from '@/api/song'
+import useNotify from '@/hooks/useNotify'
+import useMusicStore from '@/store/music'
 
 export type ItemSong = {
     id: number
@@ -23,6 +27,8 @@ export type ItemList = {
     playcount?: number
     artists?: Artist[]
     creator?: number
+    subscribed?: boolean
+    isOwner?: boolean
 }
 
 const emits = defineEmits(['artistClick', 'bottom'])
@@ -35,9 +41,8 @@ const props = defineProps({
 })
 
 const userStore = useUserStore()
-
-const tableRef = ref()
-
+const notify = useNotify()
+const musicStore = useMusicStore()
 const { playSongById, playListById, playIntelligence } = usePlayer()
 
 const headers = computed(() => {
@@ -134,25 +139,44 @@ function numberCount(num: number) {
     }
 }
 
-// 滚动到距离底部100px提示
-onMounted(() => {
-    const vtable = tableRef.value
-    if (vtable?.$el) {
-        const tableWrapper = (vtable.$el as HTMLDivElement).querySelector(
-            '.v-table__wrapper'
-        )
-        if (tableWrapper) {
-            tableWrapper.addEventListener('scroll', (e) => {
-                if (e.target instanceof HTMLDivElement) {
-                    const { scrollTop, scrollHeight, clientHeight } = e.target
-                    if (scrollHeight - clientHeight - 100 <= scrollTop) {
-                        emits('bottom')
-                    }
-                }
-            })
-        }
+function likeSongCheck(id: number) {
+    return props.type === 'songList' && musicStore.userLikeSongIds.includes(id)
+}
+
+// 收藏/取消 歌单
+async function subscribePlayList(id: number, subscribed?: boolean) {
+    if (subscribed === undefined) {
+        const { playlist: detail } = await _playListDetail(id)
+        subscribed = detail.subscribed
     }
-})
+
+    await _subscribe(subscribed ? 2 : 1, id)
+    notify({
+        text: subscribed ? '取消收藏成功' : '收藏成功',
+    })
+}
+
+async function likeSong(id: number) {
+    const isLike = musicStore.userLikeSongIds.includes(id)
+    await _likeSong(id, !isLike)
+    notify({
+        text: `${isLike ? '取消喜欢' : '喜欢'}成功`,
+    })
+    musicStore.$likeIdsUpdate()
+}
+
+const onLikeClick = debounce(
+    (record: ItemList | ItemSong) => {
+        props.type === 'playList'
+            ? subscribePlayList(record.id, (record as ItemList).subscribed)
+            : likeSong(record.id)
+    },
+    1000,
+    {
+        leading: true,
+        trailing: false,
+    }
+)
 </script>
 
 <template>
@@ -167,7 +191,6 @@ onMounted(() => {
         height="600"
         item-value="name"
         v-show="!props.loading"
-        ref="tableRef"
         :hide-default-footer="true"
         :items-per-page="-1"
     >
@@ -214,6 +237,14 @@ onMounted(() => {
                 variant="text"
                 @click="onPlayClick(item.raw.id)"
             ></v-btn>
+            <v-btn class="ms-2" variant="text" @click="onLikeClick(item.raw)">
+                <template #append>
+                    <v-icon
+                        icon="mdi-heart"
+                        :color="likeSongCheck(item.raw.id) ? '#D32F2F' : ''"
+                    ></v-icon>
+                </template>
+            </v-btn>
         </template>
         <template #item.artists="{ item }">
             <span

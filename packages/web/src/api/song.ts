@@ -67,3 +67,11 @@ export function _userLikeSongIdlist(uid: number): Promise<{
         params: { uid },
     })
 }
+
+// like true 喜欢  false 不喜欢
+export function _likeSong(id: number, like = true) {
+    return request({
+        url: '/like',
+        params: { id, like },
+    })
+}

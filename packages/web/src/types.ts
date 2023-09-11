@@ -33,6 +33,7 @@ export type PlayList = {
     playcount?: number
     playCount?: number
     trackCount?: number
+    subscribed?: boolean
     picUrl: string
     name: string
 }
