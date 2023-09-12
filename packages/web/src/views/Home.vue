@@ -90,9 +90,14 @@ watch(page, () => {
 // 搜索相关
 const searchValue = ref('')
 let lastSearch = ''
+
 // 1歌曲 10专辑 1000 歌单
 type SearchType = ValueOf<typeof SEARCH_TYPE>
 const searchType = ref<SearchType>(SEARCH_TYPE.SONG)
+watch(searchType, () => {
+    lastSearch = ''
+})
+
 const onSearch = debounce(
     () => {
         if (lastSearch !== searchValue.value) {
