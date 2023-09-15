@@ -41,6 +41,7 @@ declare module 'APlayer' {
         storageName?: string
         customAudioType?: Record<string, void>
         customInit?: (player: any, src: APlayerOptions) => Promise<any>
+        skipForwardWhenError?: boolean
     }
 
     interface FullScreen {

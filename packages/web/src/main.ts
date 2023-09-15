@@ -5,7 +5,7 @@ import Notifications from '@kyvg/vue3-notification'
 
 import '@mdi/font/css/materialdesignicons.css'
 import './style.css'
-import 'APlayer/dist/APlayer.min.css'
+import '../node_modules/aplayer/dist/APlayer.min.css'
 import App from './App.vue'
 import router from './router'
 

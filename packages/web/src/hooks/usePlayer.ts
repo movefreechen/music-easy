@@ -249,6 +249,7 @@ export default function usePlayer() {
                 audio: [],
                 theme: '#121212',
                 lrcType: 1,
+                skipForwardWhenError: false,
             })
 
             aplayerInstance.on('loadstart', onLoadstart)

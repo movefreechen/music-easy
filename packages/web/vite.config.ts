@@ -11,6 +11,7 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': path.resolve(__dirname, 'src'),
+            APlayer: path.resolve(__dirname, 'public/APlayer.min.js'),
         },
     },
     plugins: [
@@ -46,5 +47,11 @@ export default defineConfig({
             },
             keep_classnames: true,
         },
+        commonjsOptions: {
+            include: [/APlayer/],
+        },
+    },
+    optimizeDeps: {
+        include: ['APlayer'],
     },
 })
