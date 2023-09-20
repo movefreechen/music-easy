@@ -221,6 +221,7 @@ export default function usePlayer() {
         if (song?.id) {
             const urls = await fetchSongUrl(song.id)
             song.url = urls[0].url
+            aplayerInstance.list.switch(aplayerInstance.list?.index)
             aplayerInstance.play()
         } else {
             aplayerInstance.skipForward()
