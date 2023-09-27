@@ -1,18 +1,39 @@
-# Vue 3 + TypeScript + Vite
+![logo](https://github.com/movefreechen/music-easy/raw/main/packages/extension/logo.png)
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+# 表格风 vscode Netease 音乐播放插件
 
-## Recommended IDE Setup
+[![Visual Studio Marketplace](https://img.shields.io/badge/Visual%20Studio-Marketplace-007acc.svg?style=flat-square)](https://marketplace.visualstudio.com/items?itemName=movefreechen.music-easy)
+[![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/movefreechen.music-easy.svg?style=flat-square)](https://marketplace.visualstudio.com/items?itemName=movefreechen.music-easy)
 
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+### 感谢 [NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi) 提供的音乐 api
 
-## Type Support For `.vue` Imports in TS
+### 本项目网页部分使用 vue3 + vuetify + APlayer 开发
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
+### 请使用 pnpm 进行依赖安装
 
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
+### 根目录执行 pnpm run build 即可打包，打包好的插件在 packages/extension/dist 下面
 
-1. Disable the built-in TypeScript Extension
-   1. Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-   2. Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
+## 使用
+
+在命令面板中输入: Music Easy，支持 http/https 代理，支持有帐号密码的代理
+
+## 配置项
+
+1.music.easy.proxy: 代理地址，例如 http://username:password@127.0.0.1:8888  
+2.music.easy.port: api 服务启动端口，默认 4000
+
+## 已有功能
+
+1.每日推荐歌单  
+2.每日推荐歌曲  
+3.搜索歌单/歌曲  
+4.我喜欢的歌曲  
+5.我收藏/创建的歌单  
+6.登录  
+7.登出  
+8.私人 FM(当播放列表为空的时候，点击左下角播放按钮就能开启)  
+9.收藏歌曲/歌单
+
+## 准备做的功能
+
+1.查看歌曲评论
