@@ -1,11 +1,11 @@
 {
   "name": "music-easy",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "pnpm run -C packages/web build && pnpm run -C packages/extension buildApi && pnpm run -C packages/extension package"
+    "build": "pnpm run -C packages/web build && pnpm run -C packages/extension buildApi && pnpm run -C packages/extension build"
   },
   "keywords": [],
   "author": "",

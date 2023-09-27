@@ -4,7 +4,7 @@
   "description": "表格风音乐播放器",
   "publisher": "movefreechen",
   "icon": "./logo.png",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "engines": {
     "vscode": "^1.79.0"
   },
@@ -47,7 +47,8 @@
     "pretest": "npm run compile-tests && npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js",
-    "buildApi": "ncc build node_modules/NeteaseCloudMusicApi/app.js -o public -a"
+    "buildApi": "ncc build node_modules/NeteaseCloudMusicApi/app.js -o public -a",
+    "build": "vsce package --no-dependencies"
   },
   "devDependencies": {
     "@types/glob": "^8.1.0",

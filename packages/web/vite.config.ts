@@ -11,7 +11,7 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': path.resolve(__dirname, 'src'),
-            APlayer: path.resolve(__dirname, 'public/APlayer.min.js?v=0.1'),
+            APlayer: path.resolve(__dirname, 'public/APlayer.min.js'),
         },
     },
     plugins: [
