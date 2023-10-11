@@ -61,7 +61,8 @@ async function fetchAllMusic() {
 
     const { privileges, songs } = await _playlistTrackAll(
         props.id,
-        offset.value
+        offset.value * 20,
+        20
     )
     musicList.value = musicList.value.concat(
         songs.map((song, index) => ({

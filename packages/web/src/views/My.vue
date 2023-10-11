@@ -71,7 +71,7 @@ async function getMyPlayList() {
     const { subPlaylistCount, createdPlaylistCount } = await _userSubcount()
     const { playlist } = await _userPlayList(
         userStore.profile.userId!,
-        page.value - 1,
+        (page.value - 1) * limit.value,
         limit.value
     )
 

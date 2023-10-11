@@ -1,6 +1,6 @@
 ![logo](https://github.com/movefreechen/music-easy/raw/main/packages/extension/logo.png)
 
-# 表格风 vscode Netease 音乐播放插件
+# 表格风云音乐播放器 Powered by NeteaseCloudMusic
 
 [![Visual Studio Marketplace](https://img.shields.io/badge/Visual%20Studio-Marketplace-007acc.svg?style=flat-square)](https://marketplace.visualstudio.com/items?itemName=movefreechen.music-easy)
 [![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/movefreechen.music-easy.svg?style=flat-square)](https://marketplace.visualstudio.com/items?itemName=movefreechen.music-easy)
@@ -36,4 +36,5 @@
 
 ## 准备做的功能
 
-1.查看歌曲评论
+1.查看歌曲评论  
+2.搜索专辑

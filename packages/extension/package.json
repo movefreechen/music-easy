@@ -1,10 +1,10 @@
 {
   "name": "music-easy",
-  "displayName": "music easy",
-  "description": "表格风音乐播放器",
+  "displayName": "Music Easy",
+  "description": "表格风云音乐播放器 Powered by NeteaseCloudMusic",
   "publisher": "movefreechen",
   "icon": "./logo.png",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "engines": {
     "vscode": "^1.79.0"
   },
