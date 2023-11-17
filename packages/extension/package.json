@@ -4,7 +4,7 @@
   "description": "表格风云音乐播放器 Powered by NeteaseCloudMusic",
   "publisher": "movefreechen",
   "icon": "./logo.png",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "engines": {
     "vscode": "^1.79.0"
   },
