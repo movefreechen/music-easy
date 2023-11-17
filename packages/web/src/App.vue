@@ -91,6 +91,7 @@ watch(
                 path: '/my',
                 label: '我的',
             })
+        !nval && menus.value.length === 2 && menus.value.splice(1, 1)
     },
     {
         immediate: true,

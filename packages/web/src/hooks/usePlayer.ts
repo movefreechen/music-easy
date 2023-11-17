@@ -25,6 +25,8 @@ interface AplayerSong {
     level?: PlayLevel
 }
 
+let tryCount = 0
+
 async function fetchSongUrl(id: number | number[]) {
     const res = await _songUrl(id)
     return res.map((item) => ({
@@ -218,7 +220,16 @@ export default function usePlayer() {
     async function onError() {
         aplayerInstance.pause()
         const song = currentSong()
+
         if (song?.id) {
+            if (tryCount > 2) {
+                tryCount = 0
+                aplayerInstance.skipForward()
+                return aplayerInstance.play()
+            }
+
+            tryCount++
+
             const urls = await fetchSongUrl(song.id)
             song.url = urls[0].url
             aplayerInstance.list.switch(aplayerInstance.list?.index)
